@@ -1,0 +1,217 @@
+/* ============================================
+   THEME-PSYCH.CSS — OPTIMIZED LIGHT VERSION 🌈
+   سنگینی کم، همون وایب
+   ============================================ */
+
+:root {
+  --void: #08070f;
+  --void-2: #0f0c1e;
+  --paper: #f7f2e8;
+  --paper-dim: #c9c2b5;
+  --magenta: #ff2d95;
+  --purple: #7a2cff;
+  --cyan: #00ffd1;
+  --lime: #d9ff00;
+  --orange: #ff6a00;
+  --amber: #ffb700;
+  --ink: #0a0a0f;
+}
+
+body { background: #07060e; }
+
+.background .back {
+  opacity: 0.55;
+  filter: saturate(1.15) contrast(1.05);
+  will-change: transform;
+}
+
+/* فقط 2 گرادینت سبک به جای 5 تا */
+.background > p {
+  background:
+    radial-gradient(90% 70% at 20% 20%, rgba(255,45,149,0.20), transparent 60%),
+    radial-gradient(80% 60% at 80% 75%, rgba(122,44,255,0.22), transparent 62%),
+    linear-gradient(180deg, rgba(8,7,15,0.65), rgba(8,7,15,0.82));
+  -webkit-backdrop-filter: blur(8px) saturate(1.15);
+  backdrop-filter: blur(8px) saturate(1.15);
+}
+
+/* نویز خیلی سبک */
+body::before {
+  content:""; position:fixed; inset:0; z-index:50; pointer-events:none;
+  opacity:0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+body::after {
+  content:""; position:fixed; inset:0; z-index:4; pointer-events:none;
+  background: radial-gradient(ellipse at 50% 45%, transparent 48%, rgba(0,0,0,0.65) 100%);
+}
+
+/* blobs سبک‌تر - blur 18 به جای 40، opacity کمتر */
+.content::before {
+  content:""; position:fixed;
+  width:110vw; height:110vh; left:-5vw; top:-5vh;
+  z-index:-1; pointer-events:none;
+  opacity:0.28;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(255,45,149,0.14), transparent 38%),
+    radial-gradient(circle at 75% 25%, rgba(0,255,209,0.12), transparent 36%),
+    radial-gradient(circle at 55% 80%, rgba(122,44,255,0.14), transparent 42%);
+  filter: blur(18px);
+  will-change: transform;
+  animation: psychFloat 24s ease-in-out infinite alternate;
+}
+
+@keyframes psychFloat {
+  0% { transform: translate3d(0,0,0) scale(1); }
+  100% { transform: translate3d(-2%, 1.5%, 0) scale(1.05); }
+}
+
+/* ---------- ناوبری سبک ---------- */
+.navbar {
+  top:14px; right:50%; left:auto;
+  transform: translateX(50%);
+  width: min(94vw, 1180px);
+  border-radius: 999px;
+  padding: 10px 16px 10px 20px;
+  background: rgba(18,14,36,0.62);
+  -webkit-backdrop-filter: blur(12px) saturate(1.25);
+  backdrop-filter: blur(12px) saturate(1.25);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.45);
+  will-change: transform;
+}
+
+.navbar::before { display:none; } /* حذف بوردر گرادینت سنگین */
+
+.logo { text-shadow: 0 0 12px rgba(255,45,149,0.35); letter-spacing:4px; }
+.logo span {
+  background: linear-gradient(90deg, var(--magenta), var(--cyan));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.logo-img {
+  filter: drop-shadow(0 0 8px rgba(0,255,209,0.3));
+  animation: none; /* حذف hue rotate سنگین */
+}
+
+.nav-links a {
+  position:relative; color: var(--paper-dim);
+  padding:8px 14px; border-radius:999px;
+  transition: all 0.25s ease;
+}
+.nav-links a:hover, .nav-links a.active {
+  color: var(--paper);
+  background: rgba(255,255,255,0.07);
+}
+
+.hamburger { border-radius:999px; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12); }
+.hamburger span { background: var(--paper); }
+
+/* ---------- تیترها سبک ---------- */
+.section-title, .page-hero h1 {
+  text-shadow: 0 0 20px rgba(122,44,255,0.25);
+}
+.section-title span, .page-hero h1 span {
+  background: linear-gradient(100deg, var(--magenta), var(--cyan));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  filter: none;
+  animation: none;
+}
+
+/* ---------- دکمه‌ها ---------- */
+.btn-primary {
+  background: linear-gradient(100deg, var(--magenta), var(--purple));
+  color: #fff;
+  border-radius:999px;
+  box-shadow: 0 4px 18px rgba(255,45,149,0.32);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.btn-primary::before { display:none; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 26px rgba(255,45,149,0.4); }
+
+.btn-ghost {
+  border-radius:999px; color: var(--paper);
+  border-color: rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.03);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+.btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
+
+/* ---------- کارت‌ها سبک ---------- */
+.album-card, .product-card, .auth-card, .profile-card, .dash-card,
+.cart-summary, .contact-form, .edit-card, .order-card, .info-card,
+.cart-item, .track {
+  background: linear-gradient(180deg, rgba(22,16,40,0.82), rgba(10,8,18,0.9));
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px !important;
+  -webkit-backdrop-filter: blur(10px) saturate(1.15);
+  backdrop-filter: blur(10px) saturate(1.15);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+  transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+}
+
+.album-card:hover, .product-card:hover, .dash-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255,45,149,0.22);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.45), 0 0 20px rgba(255,45,149,0.12);
+}
+
+.price {
+  background: linear-gradient(90deg, var(--lime), var(--cyan));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+
+.badge {
+  background: linear-gradient(135deg, var(--magenta), var(--orange));
+  border-radius:999px;
+  box-shadow: 0 2px 10px rgba(255,45,149,0.35);
+}
+
+.add-btn { background: var(--paper); color: var(--ink); border-radius:999px; font-weight:800; }
+
+.cart-btn {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.14);
+  border-radius:999px;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+.cart-btn:hover { border-color: var(--magenta); }
+
+.cart-count { background: var(--magenta); box-shadow: none; }
+
+.qty-box { border-radius:999px; border-color: rgba(255,255,255,0.14); background: rgba(0,0,0,0.2); }
+
+.contact-form input, .contact-form textarea, .auth-form input, .edit-form input {
+  border-radius: 12px;
+  background: rgba(0,0,0,0.22);
+  border-color: rgba(255,255,255,0.10);
+  color: var(--paper);
+}
+.contact-form input:focus, .contact-form textarea:focus, .auth-form input:focus, .edit-form input:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 2px rgba(0,255,209,0.15);
+}
+
+.auth-tab.active {
+  background: linear-gradient(100deg, var(--magenta), var(--purple));
+  color: #fff; border-radius:999px;
+}
+
+.avatar { border-color: rgba(255,45,149,0.35); box-shadow: 0 0 18px rgba(255,45,149,0.25); }
+.avatar-edit { background: var(--magenta); }
+
+.toast {
+  background: rgba(18,14,36,0.92);
+  border-color: rgba(255,45,149,0.28);
+  border-radius: 999px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+
+.footer {
+  background: rgba(8,7,15,0.82);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}

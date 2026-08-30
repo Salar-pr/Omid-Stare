@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="images/logo.png" />
+    <link rel="stylesheet" href="css/main.css" />
+    <title>تماس — OMID RASTAR PSYCH</title>
+  </head>
+  <body>
+    <section class="background">
+      <img class="back" src="images/psych-portal.jpg" alt="" />
+      <p></p>
+    </section>
+
+    <nav class="navbar">
+      <a class="logo" href="index.html"><img class="logo-img" src="images/logo.png" alt="" />OMID <span>RASTAR</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html">خانه</a></li>
+        <li><a href="albums.html">آلبوم‌ها</a></li>
+        <li><a href="shop.html">فروشگاه</a></li>
+        <li><a class="active" href="contact.html">تماس</a></li>
+        <li><a id="navAccount" href="account.html">ورود/ثبت‌نام</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" type="button" aria-label="منو"><span></span><span></span><span></span></button>
+    </nav>
+
+    <main class="content">
+      <div class="page-hero rv">
+        <h1>بزن به <span>پورتال</span></h1>
+        <p>رزرو اجرا، همکاری پراگرسیو، کلاس گیتارِ سایکدلیک یا فقط یه سلامِ نئونی.</p>
+      </div>
+
+      <div class="contact-wrap">
+        <div class="info-stack" style="display:flex; flex-direction:column; gap:14px;">
+          <div class="info-card rv">
+            <b>📍 لوکیشنِ ووید</b>
+            <p>تهران — استودیو پرتال، خیابانِ مایع، پلاکِ ∞<br>جلسات فقط با هماهنگیِ تریپی.</p>
+          </div>
+          <div class="info-card rv">
+            <b>✉️ ایمیلِ مستقیم</b>
+            <p dir="ltr" style="text-align:left">omid.rastar.psych@void.ir<br>booking@rastar.rocks</p>
+          </div>
+          <div class="info-card rv">
+            <b>🌀 وایبِ فعلی</b>
+            <p>دارم رو یه ترکِ ۱۴ دقیقه‌ای کار می‌کنم: شروعش 432Hz سیتار، وسطش ریفِ ۷/۸ لایم، تهش انفجارِ ماژنتا.</p>
+          </div>
+        </div>
+
+        <form class="contact-form rv" id="contactForm" novalidate>
+          <label for="cName">نام</label>
+          <input id="cName" type="text" placeholder="اسمتو بنویس..." />
+          <div class="field-error" id="eName"></div>
+
+          <label for="cEmail">ایمیل</label>
+          <input id="cEmail" type="text" placeholder="ایمیلت..." />
+          <div class="field-error" id="eEmail"></div>
+
+          <label for="cMsg">پیامِ پرتالی</label>
+          <textarea id="cMsg" placeholder="چی تو ذهنته؟ ریف؟ همکاری؟ تریپ؟"></textarea>
+          <div class="field-error" id="eMsg"></div>
+
+          <button class="btn btn-primary" type="submit">ارسال به ووید ↗</button>
+        </form>
+      </div>
+
+      <footer class="footer">
+        <div class="socials"><a href="#">INSTAGRAM</a><a href="#">YOUTUBE</a><a href="#">SPOTIFY</a><a href="#">SOUNDCLOUD</a></div>
+        © ۱۴۰۴ OMID RASTAR ★ CONTACT PORTAL
+      </footer>
+    </main>
+
+    <script src="js/nav.js"></script>
+    <script src="js/toast.js"></script>
+    <script src="js/contact.js"></script>
+    <script src="js/fx.js"></script>
+  </body>
+</html>

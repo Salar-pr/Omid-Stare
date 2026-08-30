@@ -1,0 +1,72 @@
+/* PROFILE — psych */
+
+.profile-wrap {
+  display:grid; grid-template-columns: 320px 1fr;
+  gap:22px; padding: 0 4vw 70px;
+}
+
+.profile-card {
+  padding:24px; text-align:center; height:fit-content; position:sticky; top:100px;
+}
+
+.avatar-wrap { position:relative; width:120px; height:120px; margin:0 auto 14px; }
+
+.avatar {
+  width:120px; height:120px; border-radius:50%; object-fit:cover;
+  border:2px solid rgba(255,45,149,0.5); background:#222;
+}
+
+.avatar-edit {
+  position:absolute; bottom:2px; left:2px;
+  width:32px; height:32px; border-radius:50%;
+  border:2px solid #08070f; color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:0.9rem;
+}
+
+.profile-card h2 { font-size:1.2rem; font-weight:900; margin-bottom:6px; }
+
+.profile-badge {
+  display:inline-flex; padding:6px 12px; border-radius:999px;
+  border:1px solid rgba(0,255,209,0.22);
+  background: rgba(0,255,209,0.08);
+  color: var(--cyan); font-size:0.7rem; letter-spacing:2px; font-weight:800;
+}
+
+.profile-username { margin-top:14px; color:#a9a39a; font-size:0.86rem; }
+.profile-username b { color:#f7f2e8; }
+
+.profile-stats {
+  display:grid; grid-template-columns: repeat(2,1fr); gap:10px; margin-top:18px;
+}
+
+.profile-stats div {
+  background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06);
+  border-radius:14px; padding:12px; text-align:center;
+}
+.profile-stats b { display:block; font-size:1.1rem; }
+.profile-stats small { color:#a9a39a; font-size:0.68rem; letter-spacing:1px; }
+
+.dash-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:16px; }
+
+.dash-card {
+  padding:18px; display:flex; flex-direction:column; gap:12px;
+  position:relative; overflow:hidden; cursor:pointer;
+}
+
+.dash-icon {
+  width:44px; height:44px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.10);
+  font-size:1.2rem;
+}
+
+.dash-card h3 { font-size:1rem; font-weight:900; }
+.dash-card p { color:#a9a39a; font-size:0.84rem; line-height:1.7; }
+
+.dash-arrow { margin-top:auto; font-weight:900; color: var(--magenta); }
+
+@media (max-width: 900px){
+  .profile-wrap { grid-template-columns:1fr; }
+  .profile-card { position:static; }
+}

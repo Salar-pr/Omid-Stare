@@ -1,0 +1,369 @@
+/* ============================================
+   MAIN.CSS — OMID RASTAR nemone-4
+   PSYCHEDELIC PROGRESSIVE THEME 🌈👁️🌀
+   ============================================ */
+
+@import url("index.css");
+@import url("albums.css");
+@import url("shop.css");
+@import url("cart.css");
+@import url("contact.css");
+@import url("account.css");
+@import url("profile.css");
+@import url("orders.css");
+@import url("edit-profile.css");
+@import url("theme-psych.css");
+@import url("welcome-pilot.css");
+
+/* ---------- Reset ---------- */
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { min-height:100%; scroll-behavior:smooth; }
+body {
+  overflow-x:hidden;
+  font-family: "Space Grotesk", Tahoma, Vazirmatn, sans-serif;
+  color: #f7f2e8;
+  background: #08070f;
+  line-height:1.6;
+}
+img { display:block; max-width:100%; }
+a { text-decoration:none; color:inherit; }
+ul { list-style:none; }
+
+::selection { background:#ff2d95; color:#fff; }
+
+/* ---------- بک‌گراند ثابت ---------- */
+.background { position:relative; z-index:1; }
+.back {
+  position:fixed; inset:0;
+  width:100%; height:100vh;
+  object-fit:cover; z-index:0; pointer-events:none;
+}
+.background > p {
+  position:fixed; inset:0; width:100%;
+  z-index:1; pointer-events:none;
+}
+
+/* ---------- ناوبری ---------- */
+.navbar {
+  position:fixed; z-index:20;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.logo {
+  direction:ltr;
+  display:flex; align-items:center; gap:12px;
+  font-size:0.92rem; font-weight:900;
+  letter-spacing:5px;
+  color:#f7f2e8;
+}
+.logo-img { height:32px; width:auto; }
+
+.nav-links { display:flex; align-items:center; gap:6px; }
+.nav-links a { font-size:0.76rem; letter-spacing:2px; font-weight:700; }
+.nav-user { display:flex; align-items:center; gap:8px; }
+.nav-avatar {
+  width:26px; height:26px; border-radius:50%; object-fit:cover;
+  border:1px solid rgba(255,255,255,0.5); background:#222;
+}
+
+/* ---------- همبرگری ---------- */
+/* ---------- همبرگری — فقط برای تبلت و موبایل (<=768px) ---------- */
+.hamburger {
+  display:none; flex-direction:column; justify-content:center; gap:5px;
+  width:42px; height:42px; padding:9px;
+  border:1px solid rgba(255,255,255,0.18);
+  cursor:pointer; background:transparent;
+  border-radius:999px;
+  transition: all 0.25s;
+}
+.hamburger span {
+  display:block; height:2px; width:100%;
+  background:#f7f2e8; transition: transform 0.3s, opacity 0.3s;
+}
+.hamburger.open span:nth-child(1){ transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2){ opacity:0; }
+.hamburger.open span:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
+
+/* تبلت بزرگ: فاصله‌ها رو کم کن تا جا شه */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .navbar { width: min(96vw, 1100px); padding: 9px 14px 9px 18px; }
+  .nav-links { gap: 2px; }
+  .nav-links a { font-size:0.70rem; padding:7px 11px; letter-spacing:1px; }
+  .logo { font-size:0.82rem; letter-spacing:3px; }
+  .logo-img { height:28px; }
+}
+
+@media (max-width: 768px){
+  .navbar {
+    width: min(96vw, 560px);
+    top:10px;
+  }
+  .hamburger { display:flex; }
+  .nav-links {
+    position:absolute; top: calc(100% + 12px); right:0; left:0;
+    flex-direction:column; gap:0;
+    background: rgba(15,12,30,0.88);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border:1px solid rgba(255,255,255,0.10);
+    border-radius:18px;
+    padding:10px;
+    opacity:0; visibility:hidden;
+    transform: translateY(-10px) scale(0.98);
+    transition: all 0.3s ease;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+  }
+  .nav-links.open { opacity:1; visibility:visible; transform:none; }
+  .nav-links li { width:100%; }
+  .nav-links a {
+    display:flex; width:100%;
+    padding:14px 18px; border-radius:12px;
+    font-size:0.88rem;
+  }
+  .logo { letter-spacing:3px; font-size:0.82rem; }
+}
+
+/* ---------- محتوا ---------- */
+.content {
+  position:relative; z-index:2; width:100%;
+  padding-top: 86px;
+}
+
+/* ---------- دکمه‌ها ---------- */
+.btn {
+  display:inline-flex; align-items:center; justify-content:center;
+  gap:8px;
+  padding:14px 30px;
+  font-weight:800; font-size:0.82rem; letter-spacing:2px;
+  cursor:pointer; border:1px solid transparent;
+  transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+  white-space:nowrap;
+}
+
+/* ---------- تیتر صفحات داخلی ---------- */
+.section-title {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight:900; color:#f7f2e8;
+  text-align:center; letter-spacing:1px;
+  margin-bottom:10px;
+}
+.section-sub {
+  text-align:center; color:#a9a39a;
+  letter-spacing:3px; font-size:0.78rem; margin-bottom:46px;
+}
+.page-hero {
+  padding: 130px 4vw 36px;
+  text-align:center;
+  position:relative;
+}
+.page-hero h1 {
+  font-size: clamp(2.4rem, 6.5vw, 4.6rem);
+  font-weight:900; color:#f7f2e8;
+  letter-spacing:1px; margin-bottom:16px;
+  line-height:0.95;
+}
+.page-hero p {
+  color:#b8b0a3; max-width:620px; margin:0 auto;
+  line-height:2; font-size:0.96rem;
+}
+
+/* ---------- فوتر ---------- */
+.footer {
+  padding: 44px 4vw; text-align:center;
+  color:#7a7570; font-size:0.74rem; letter-spacing:2px;
+}
+.footer .socials {
+  display:flex; justify-content:center; gap:28px; margin-bottom:18px;
+}
+.footer .socials a {
+  color:#c9c2b5; font-size:0.8rem; letter-spacing:3px; transition: all 0.25s;
+}
+
+/* ---------- توست ---------- */
+.toast {
+  position:fixed; bottom:28px; right:50%;
+  transform: translateX(50%) translateY(16px);
+  z-index:400;
+  color:#f7f2e8; font-size:0.88rem; font-weight:700;
+  padding:14px 26px;
+  opacity:0; transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+  pointer-events:none;
+}
+.toast.show { opacity:1; transform: translateX(50%) translateY(0); }
+.toast.error { border-color: rgba(255,45,80,0.7); }
+
+.field-error {
+  color:#ff6b9d; font-size:0.8rem; min-height:1.1em; margin-top:6px;
+}
+
+/* ---------- reveal ---------- */
+.rv {
+  opacity:0; transform: translateY(36px) scale(0.98);
+  transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1);
+}
+.rv.on { opacity:1; transform:none; }
+
+/* ---------- ولکام پورتال سایکدلیک — نسخه تاریک و نرم 👁️ ---------- */
+.welcome {
+  position:fixed; inset:0; z-index:9999;
+  display:flex; align-items:center; justify-content:center;
+  background: #04030a;
+  overflow:hidden;
+  animation: welcomeOut 1.1s cubic-bezier(0.16,1,0.3,1) 3.6s forwards;
+}
+
+.w-portal {
+  position:absolute; inset:-10%;
+  background:
+    radial-gradient(ellipse at 50% 50%, rgba(18,12,36,0.4) 0%, transparent 60%),
+    url("../images/psych-portal.jpg");
+  background-size: cover;
+  background-position: center;
+  opacity:0;
+  filter: brightness(0.42) saturate(0.85) contrast(1.05) blur(0px);
+  animation: portalReveal 3.8s cubic-bezier(0.16,1,0.3,1) forwards;
+  will-change: transform, opacity, filter;
+}
+
+@keyframes portalReveal {
+  0% { transform: scale(1.18) rotate(-1deg); opacity:0; filter: brightness(0.2) saturate(0.3) blur(18px); }
+  35% { opacity:0.32; filter: brightness(0.38) saturate(0.7) blur(4px); }
+  100% { transform: scale(1) rotate(0deg); opacity:0.38; filter: brightness(0.42) saturate(0.85) blur(0px); }
+}
+
+/* وینیت تاریک برای اینکه فلش نزنه */
+.welcome::before {
+  content:"";
+  position:absolute; inset:0; z-index:1;
+  background:
+    radial-gradient(ellipse at 50% 50%, transparent 42%, rgba(4,3,10,0.88) 85%),
+    linear-gradient(180deg, rgba(4,3,10,0.55), rgba(4,3,10,0.75));
+  pointer-events:none;
+}
+
+/* اورا نرم پشت لوگو */
+.w-aura {
+  position:absolute; width: 68vmin; height: 68vmin;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 35% 35%, rgba(255,45,149,0.10), transparent 55%),
+    radial-gradient(circle at 65% 65%, rgba(0,255,209,0.08), transparent 60%),
+    radial-gradient(circle at 50% 50%, rgba(122,44,255,0.10), transparent 70%);
+  filter: blur(22px);
+  opacity:0;
+  animation: auraIn 2.8s ease 0.6s forwards, auraFloat 6s ease-in-out 2.8s infinite alternate;
+  will-change: transform, opacity;
+}
+
+@keyframes auraIn { from{ opacity:0; transform: scale(0.8);} to{ opacity:1; transform: scale(1);} }
+@keyframes auraFloat {
+  0% { transform: scale(1) translate(0,0); }
+  100% { transform: scale(1.08) translate(-1.5%, 1.2%); }
+}
+
+.w-rings {
+  position:absolute; width:72vmin; height:72vmin;
+  border-radius:50%;
+  border: 1px dashed rgba(255,45,149,0.14);
+  opacity:0;
+  animation: ringIn 1.2s ease forwards, ringSpin 18s linear infinite, ringPulse 4s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.w-rings.r2 { width:56vmin; height:56vmin; animation-delay: 0.2s, 0s, 0.4s; border-style: solid; border-color: rgba(0,255,209,0.13); }
+.w-rings.r3 { width:38vmin; height:38vmin; animation-delay: 0.4s, 0s, 0.8s; border-style: dotted; border-color: rgba(217,255,0,0.12); }
+.w-rings.r4 { width:86vmin; height:86vmin; animation-delay: 0s, 0s, 0s; border-color: rgba(122,44,255,0.10); border-style: solid; }
+
+@keyframes ringIn {
+  from { opacity:0; transform: scale(0.85) rotate(-8deg); }
+  to { opacity:1; transform: scale(1) rotate(0deg); }
+}
+@keyframes ringSpin { from{ transform: rotate(0deg) scale(1);} to{ transform: rotate(360deg) scale(1);} }
+@keyframes ringPulse {
+  0%,100% { opacity:0.35; }
+  50% { opacity:0.75; }
+}
+
+.w-center {
+  position:relative; z-index:3;
+  display:flex; flex-direction:column; align-items:center; gap:20px;
+  text-align:center;
+}
+
+.w-logo {
+  width: min(44vw, 240px);
+  opacity:0;
+  filter: drop-shadow(0 0 12px rgba(255,45,149,0.22)) brightness(0.9);
+  transform: translateY(18px) scale(0.96);
+  animation: logoReveal 1.2s cubic-bezier(0.16,1,0.3,1) 0.9s forwards, logoFloat 5s ease-in-out 2.1s infinite alternate;
+  will-change: transform, opacity, filter;
+}
+
+@keyframes logoReveal {
+  0% { opacity:0; transform: translateY(22px) scale(0.92); filter: blur(12px) brightness(0.6); }
+  100% { opacity:1; transform: translateY(0) scale(1); filter: blur(0px) drop-shadow(0 0 14px rgba(255,45,149,0.28)) brightness(0.95); }
+}
+
+@keyframes logoFloat {
+  0% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(-6px) scale(1.015); }
+}
+
+.w-text {
+  font-size:0.68rem; letter-spacing:5px; color:#c9c2b5;
+  opacity:0; font-weight:700;
+  transform: translateY(10px);
+  animation: textReveal 0.9s ease 1.5s forwards;
+}
+
+.w-text span {
+  display:inline-block;
+  width:6px; height:6px; border-radius:50%;
+  background: var(--cyan);
+  margin: 0 10px;
+  box-shadow: 0 0 10px var(--cyan);
+  animation: dotPulse 2s ease-in-out infinite;
+  vertical-align: middle;
+}
+
+@keyframes textReveal { to{ opacity:0.75; transform: translateY(0);} }
+@keyframes dotPulse { 0%,100%{ opacity:0.6; transform: scale(1);} 50%{ opacity:1; transform: scale(1.35);} }
+
+.w-bar {
+  width: 120px; height:1px;
+  background: linear-gradient(90deg, transparent, rgba(255,45,149,0.35), rgba(0,255,209,0.35), transparent);
+  opacity:0;
+  animation: barReveal 0.8s ease 1.8s forwards;
+}
+
+.w-album-cover {
+  width: min(52vw, 280px);
+  aspect-ratio:1;
+  border-radius:18px;
+  overflow:hidden;
+  border: 2px solid rgba(255,255,255,0.14);
+  box-shadow: 0 0 30px rgba(255,45,149,0.22), 0 18px 50px rgba(0,0,0,0.5);
+  opacity:0;
+  transform: translateY(20px) scale(0.94);
+  animation: albumReveal 1.1s cubic-bezier(0.16,1,0.3,1) 0.8s forwards, albumFloat 5s ease-in-out 1.9s infinite alternate;
+  will-change: transform, opacity;
+}
+
+.w-album-cover img { width:100%; height:100%; object-fit:cover; filter: saturate(1.15) contrast(1.05); }
+
+@keyframes albumReveal {
+  0% { opacity:0; transform: translateY(22px) scale(0.90); filter: blur(14px) brightness(0.7); }
+  100% { opacity:1; transform: translateY(0) scale(1); filter: blur(0px) brightness(0.98); }
+}
+@keyframes albumFloat {
+  0% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(-7px) scale(1.02); }
+}
+
+@keyframes barReveal { from{ opacity:0; transform: scaleX(0.4);} to{ opacity:1; transform: scaleX(1);} }
+
+@keyframes welcomeOut {
+  from { opacity:1; }
+  to { opacity:0; visibility:hidden; pointer-events:none; }
+}
+
+.w-panel { display:none; }

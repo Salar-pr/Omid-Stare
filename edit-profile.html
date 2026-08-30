@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="images/logo.png" />
+    <link rel="stylesheet" href="css/main.css" />
+    <title>ویرایش پروفایل — PSYCH</title>
+  </head>
+  <body>
+    <section class="background">
+      <img class="back" src="images/psych-portal.jpg" alt="" />
+      <p></p>
+    </section>
+
+    <nav class="navbar">
+      <a class="logo" href="index.html"><img class="logo-img" src="images/logo.png" alt="" />OMID <span>RASTAR</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html">خانه</a></li>
+        <li><a href="albums.html">آلبوم‌ها</a></li>
+        <li><a href="shop.html">فروشگاه</a></li>
+        <li><a href="contact.html">تماس</a></li>
+        <li><a class="active" id="navAccount" href="account.html">ورود/ثبت‌نام</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" type="button" aria-label="منو"><span></span><span></span><span></span></button>
+    </nav>
+
+    <main class="content">
+      <section class="page-hero rv">
+        <h1>ویرایشِ <span>پرتال</span></h1>
+        <p>نام، رمز و آواتارِ سایکدلیکت رو از اینجا عوض کن.</p>
+      </section>
+
+      <section class="edit-wrap rv">
+        <div class="edit-card">
+          <a class="sec-link" href="profile.html" style="margin-bottom:16px; display:inline-flex;">→ برگشت به پروفایل</a>
+
+          <div class="avatar-preview" style="position:relative; width:110px; margin:0 auto 12px;">
+            <img class="avatar" id="avatarImg" src="images/avatar-default.png" alt="" style="width:110px; height:110px;" />
+            <button class="avatar-edit" id="avatarEditBtn" type="button" style="position:absolute; bottom:4px; left:4px;">📷</button>
+            <input type="file" id="avatarInput" accept="image/*" hidden />
+          </div>
+          <button id="avatarRemoveBtn" type="button" style="display:block; margin:0 auto 18px; background:transparent; border:none; color:#a9a39a; font-size:0.76rem; cursor:pointer; letter-spacing:1px;">حذف عکس و برگشت به پیش‌فرض</button>
+
+          <form class="edit-form" id="editForm" novalidate>
+            <label for="editName">نام پرتالی</label>
+            <input id="editName" type="text" />
+            <div class="field-error" id="err-editName"></div>
+
+            <label for="editEmail">ایمیل (قابل تغییر نیست)</label>
+            <input id="editEmail" type="text" disabled />
+
+            <div style="height:1px; background: rgba(255,255,255,0.08); margin:18px 0;"></div>
+            <p style="color:var(--cyan); font-size:0.78rem; letter-spacing:1px; margin-bottom:10px;">🔒 تغییر رمز (اختیاری)</p>
+
+            <label for="curPass">رمز فعلی</label>
+            <input id="curPass" type="password" placeholder="••••••••" />
+            <div class="field-error" id="err-curPass"></div>
+
+            <label for="newPass">رمز جدید</label>
+            <input id="newPass" type="password" placeholder="حداقل ۶ کاراکتر" />
+            <div class="field-error" id="err-newPass"></div>
+
+            <button class="btn btn-primary" type="submit">ذخیره تغییرات 🌀</button>
+          </form>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div class="socials"><a href="#">INSTAGRAM</a><a href="#">YOUTUBE</a><a href="#">SPOTIFY</a><a href="#">SOUNDCLOUD</a></div>
+        © ۱۴۰۴ OMID RASTAR ★ EDIT PORTAL
+      </footer>
+    </main>
+
+    <script src="js/toast.js"></script>
+    <script src="js/edit-profile.js"></script>
+    <script src="js/nav.js"></script>
+    <script src="js/fx.js"></script>
+  </body>
+</html>

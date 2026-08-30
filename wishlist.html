@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="stylesheet" href="css/main.css">
+<title>علاقه‌مندی‌ها — OMID RASTAR</title>
+<style>
+.wish-wrap{padding:0 4vw 70px; max-width:1100px; margin:0 auto;}
+.wish-grid{display:grid; grid-template-columns: repeat(auto-fill, minmax(240px, 280px)); gap:16px; justify-content:start;}
+.wish-card{padding:12px; display:flex; flex-direction:column; gap:10px; position:relative; max-width:300px; width:100%;}
+.wish-card .thumb{border-radius:14px; overflow:hidden; aspect-ratio:4/3; background:#111; max-height:180px;}
+.wish-card .thumb img{width:100%; height:100%; object-fit:cover;}
+.wish-card h3{font-size:0.95rem; font-weight:900;}
+.wish-card .row{display:flex; justify-content:space-between; align-items:center; margin-top:auto; gap:8px;}
+.wish-empty{text-align:center; padding:60px 20px; color:#a9a39a;}
+.wish-empty b{display:block; font-size:1.4rem; color:#f7f2e8; margin-bottom:8px;}
+.remove-wish{position:absolute; top:12px; right:12px; width:32px; height:32px; border-radius:50%; border:1px solid rgba(255,255,255,0.14); background: rgba(0,0,0,0.4); color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); transition: all 0.2s;}
+.remove-wish:hover{background:var(--magenta); border-color:var(--magenta);}
+@media(max-width:600px){
+  .wish-grid{grid-template-columns: repeat(2, 1fr); gap:10px;}
+  .wish-card{max-width:none;}
+  .wish-card .thumb{max-height:140px;}
+}
+</style>
+</head>
+<body>
+<section class="background">
+  <img src="images/psych-bg.jpg" alt="" class="back" />
+  <p></p>
+</section>
+
+<nav class="navbar">
+  <a class="logo" href="index.html"><img class="logo-img" src="images/logo.png" alt="" />OMID <span>RASTAR</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">خانه</a></li>
+    <li><a href="albums.html">آلبوم‌ها</a></li>
+    <li><a href="shop.html">فروشگاه</a></li>
+    <li><a href="contact.html">تماس</a></li>
+    <li><a id="navAccount" href="account.html">ورود/ثبت‌نام</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" type="button" aria-label="منو"><span></span><span></span><span></span></button>
+</nav>
+
+<main class="content">
+  <div class="page-hero rv">
+    <h1>علاقه‌مندی‌های <span>تو</span></h1>
+    <p>هر چی لایک کردی اینجا میمونه — مثل دیجی‌کالا، برای هر کاربر جدا.</p>
+  </div>
+
+  <div class="breadcrumb rv" style="padding:0 4vw 14px;">
+    <a href="index.html">خانه</a><span>/</span><a href="shop.html">فروشگاه</a><span>/</span><b>علاقه‌مندی‌ها</b>
+  </div>
+
+  <div class="shop-toolbar rv" id="wishToolbar" style="display:none;">
+    <div class="shop-toolbar-inner">
+      <div class="shop-meta"><span class="shop-dot"></span><span id="wishCountTop">0</span> آیتم تو ویش‌لیست</div>
+      <div class="toolbar-actions">
+        <button class="btn btn-primary" id="addAllToCart" type="button" style="padding:10px 18px; font-size:0.78rem;">افزودن همه به سبد 🛒</button>
+        <button class="btn btn-ghost" id="clearWishlist" type="button" style="padding:10px 16px; font-size:0.76rem;">پاک کردن همه</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wish-wrap rv" id="wishRoot"></div>
+
+  <footer class="footer">
+    <div class="socials"><a href="#">INSTAGRAM</a><a href="#">YOUTUBE</a><a href="#">SPOTIFY</a><a href="#">SOUNDCLOUD</a></div>
+    © ۱۴۰۴ OMID RASTAR ★ WISHLIST
+  </footer>
+</main>
+
+<script src="js/nav.js"></script>
+<script src="js/toast.js"></script>
+<script src="js/products.js"></script>
+<script src="js/wishlist.js"></script>
+<script src="js/fx.js"></script>
+</body>
+</html>

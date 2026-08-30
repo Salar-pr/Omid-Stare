@@ -1,0 +1,69 @@
+/* WELCOME PILOT — PSYCH PROGRESSIVE THEME for nemone-4 */
+.welcome-pilot {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+  background: #04030a;
+  direction: ltr;
+}
+.welcome-pilot .w-panel {
+  position: absolute;
+  top: 0; bottom: 0; width: 50.2%;
+  background: linear-gradient(180deg, #0a0618, #04030a);
+  z-index: 1;
+}
+.welcome-pilot .w-left { left: 0; animation: door-open-left 1.2s cubic-bezier(0.7,0,0.3,1) 3.9s forwards; }
+.welcome-pilot .w-right { right: 0; animation: door-open-right 1.2s cubic-bezier(0.7,0,0.3,1) 3.9s forwards; }
+.welcome-pilot .w-left::after,
+.welcome-pilot .w-right::after {
+  content: ""; position: absolute; top: 0; bottom: 0; width: 2px;
+  background: linear-gradient(180deg, transparent, #ff2d95, #7a2cff, #00ffd1, transparent);
+  box-shadow: 0 0 26px 5px rgba(255, 45, 149, 0.55), 0 0 40px rgba(0,255,209,0.25);
+  opacity: 0; animation: seam-glow 0.6s ease 3.5s forwards;
+}
+.welcome-pilot .w-left::after { left: 100%; }
+.welcome-pilot .w-right::after { right: 100%; }
+.welcome-pilot .w-cover {
+  position: absolute; top: 50%; left: 50%;
+  width: min(460px, 78vw); aspect-ratio:1; object-fit:cover;
+  transform: translate(-50%, -50%) scale(0.55); opacity:0;
+  filter: drop-shadow(0 0 40px rgba(255,45,149,0.35)) drop-shadow(0 0 24px rgba(0,255,209,0.22));
+  z-index:2; border-radius:18px;
+  border: 1px solid rgba(255,255,255,0.10);
+}
+.welcome-pilot .w-cover-l { clip-path: inset(0 50% 0 0); animation: fade-zoom-in 1s cubic-bezier(0.2,0.9,0.3,1.15) 0.3s forwards, cover-open-left 1.2s cubic-bezier(0.7,0,0.3,1) 3.9s forwards; }
+.welcome-pilot .w-cover-r { clip-path: inset(0 0 0 50%); animation: fade-zoom-in 1s cubic-bezier(0.2,0.9,0.3,1.15) 0.3s forwards, cover-open-right 1.2s cubic-bezier(0.7,0,0.3,1) 3.9s forwards; }
+.welcome-pilot .w-man {
+  position: absolute; top: 50%; left: 50%;
+  width: min(340px, 58vw);
+  transform: translate(-50%, -50%) scale(0.55); opacity:0;
+  filter: drop-shadow(0 6px 30px rgba(0,0,0,0.6)) drop-shadow(0 0 24px rgba(255,45,149,0.22));
+  z-index:3;
+}
+.welcome-pilot .w-man-l { clip-path: inset(0 50% 0 0); animation: fade-zoom-in 1s cubic-bezier(0.2,0.9,0.3,1.15) 0.3s forwards, man-split-left 0.9s cubic-bezier(0.6,0,0.3,1) 2.2s forwards, man-off-left 1.2s cubic-bezier(0.7,0,0.3,1) 3.9s forwards; }
+.welcome-pilot .w-man-r { clip-path: inset(0 0 0 50%); animation: fade-zoom-in 1s cubic-bezier(0.2,0.9,0.3,1.15) 0.3s forwards, man-split-right 0.9s cubic-bezier(0.6,0,0.3,1) 2.2s forwards, man-off-right 1.2s cubic-bezier(0.7,0,0.3,1) 3.9s forwards; }
+.welcome-pilot .w-promo {
+  position: absolute; bottom: 10%; left: 50%; transform: translateX(-50%);
+  z-index:4; text-align:center; opacity:0; animation: promoIn 0.8s ease 1s forwards;
+  font-family: Tahoma, sans-serif;
+}
+.welcome-pilot .w-promo b {
+  display:block; font-size: clamp(1.1rem, 2.8vw, 1.6rem); font-weight:900; letter-spacing:2px;
+  background: linear-gradient(90deg, #ff2d95, #00ffd1);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  filter: drop-shadow(0 0 18px rgba(255,45,149,0.45));
+  margin-bottom:6px;
+}
+.welcome-pilot .w-promo small { color:#a9a39a; font-size:0.8rem; letter-spacing:2px; }
+@keyframes fade-zoom-in { to { opacity:1; transform: translate(-50%, -50%) scale(1); } }
+@keyframes man-split-left { from { opacity:1; transform: translate(-50%, -50%) scale(1); } to { opacity:1; transform: translate(calc(-50% - min(5.5vw, 48px)), -50%) scale(1); } }
+@keyframes man-split-right { from { opacity:1; transform: translate(-50%, -50%) scale(1); } to { opacity:1; transform: translate(calc(-50% + min(5.5vw, 48px)), -50%) scale(1); } }
+@keyframes man-off-left { from { opacity:1; transform: translate(calc(-50% - min(5.5vw, 48px)), -50%) scale(1); } to { opacity:1; transform: translate(calc(-50% - 62vw), -50%) scale(1); } }
+@keyframes man-off-right { from { opacity:1; transform: translate(calc(-50% + min(5.5vw, 48px)), -50%) scale(1); } to { opacity:1; transform: translate(calc(-50% + 62vw), -50%) scale(1); } }
+@keyframes cover-open-left { from { opacity:1; transform: translate(-50%, -50%) scale(1); } to { opacity:1; transform: translate(calc(-50% - 58vw), -50%) scale(1); } }
+@keyframes cover-open-right { from { opacity:1; transform: translate(-50%, -50%) scale(1); } to { opacity:1; transform: translate(calc(-50% + 58vw), -50%) scale(1); } }
+@keyframes seam-glow { to { opacity:1; } }
+@keyframes door-open-left { to { transform: translateX(-103%); } }
+@keyframes door-open-right { to { transform: translateX(103%); } }
+@keyframes promoIn { to { opacity:1; } }

@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="images/logo.png" />
+    <link rel="stylesheet" href="css/main.css" />
+    <title>پروفایل — PSYCH RASTAR</title>
+  </head>
+  <body>
+    <section class="background">
+      <img class="back" src="images/psych-portal.jpg" alt="" />
+      <p></p>
+    </section>
+
+    <nav class="navbar">
+      <a class="logo" href="index.html"><img class="logo-img" src="images/logo.png" alt="" />OMID <span>RASTAR</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html">خانه</a></li>
+        <li><a href="albums.html">آلبوم‌ها</a></li>
+        <li><a href="shop.html">فروشگاه</a></li>
+        <li><a href="contact.html">تماس</a></li>
+        <li><a class="active" id="navAccount" href="account.html">ورود/ثبت‌نام</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" type="button" aria-label="منو"><span></span><span></span><span></span></button>
+    </nav>
+
+    <main class="content">
+      <section class="page-hero rv">
+        <h1>پروفایلِ <span>پرتالی</span></h1>
+        <p>تو الان تو وویدی — اینجا مرکزِ فرمانِ تریپِ توئه.</p>
+      </section>
+
+      <section class="profile-wrap rv">
+        <div class="profile-card">
+          <div class="avatar-wrap">
+            <img class="avatar" id="avatarImg" src="images/avatar-default.png" alt="" />
+          </div>
+          <h2 id="profileName">—</h2>
+          <p class="profile-username">نام کاربری: <b id="profileUsername">—</b></p>
+          <p style="color:#a9a39a; font-size:0.84rem; margin-top:6px;" id="profileEmail">—</p>
+          <span class="profile-badge">🌀 عضو خانواده PSYCH</span>
+
+          <div class="profile-stats">
+            <div><b id="statOrders">0</b><small>سفارش</small></div>
+            <div><b id="statCart">0</b><small>تو سبد</small></div>
+          </div>
+        </div>
+
+        <div class="dash-grid">
+          <a class="dash-card" href="wishlist.html">
+            <span class="dash-icon">♡</span>
+            <h3>علاقه‌مندی‌ها</h3>
+            <p id="wishHint">چیزایی که لایک کردی — ویش‌لیستت</p>
+            <span class="dash-arrow">← برو</span>
+          </a>
+
+          <a class="dash-card" href="orders.html">
+            <span class="dash-icon">🧾</span>
+            <h3>تاریخچه خرید</h3>
+            <p id="ordersHint">سفارش‌های قبلی‌ت رو ببین — هرکدوم یه تریپِ ثبت شده.</p>
+            <span class="dash-arrow">← برو</span>
+          </a>
+
+          <a class="dash-card" href="edit-profile.html">
+            <span class="dash-icon">✏️</span>
+            <h3>ویرایش پروفایل</h3>
+            <p>نام، رمز و عکسِ پرتالی‌ت رو عوض کن. آواتارتو سایکدلیک کن.</p>
+            <span class="dash-arrow">← ویرایش</span>
+          </a>
+
+          <a class="dash-card" href="cart.html">
+            <span class="dash-icon">🛒</span>
+            <h3>سبد خرید</h3>
+            <p id="cartHint">چیزایی که هنوز تو ووید جا موندن.</p>
+            <span class="dash-arrow">← سبد</span>
+          </a>
+
+          <button class="dash-card" id="logoutBtn" type="button" style="border-color: rgba(255,45,149,0.25);">
+            <span class="dash-icon">🚪</span>
+            <h3>خروج از ووید</h3>
+            <p>میری بیرون؟ پرتال همیشه بازه، راک‌استار.</p>
+            <span class="dash-arrow">← خروج</span>
+          </button>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div class="socials"><a href="#">INSTAGRAM</a><a href="#">YOUTUBE</a><a href="#">SPOTIFY</a><a href="#">SOUNDCLOUD</a></div>
+        © ۱۴۰۴ OMID RASTAR ★ PSYCH PROFILE
+      </footer>
+    </main>
+
+    <script src="js/toast.js"></script>
+    <script src="js/profile.js"></script>
+    <script src="js/nav.js"></script>
+    <script src="js/fx.js"></script>
+  </body>
+</html>

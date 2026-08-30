@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="images/logo.png" />
+    <link rel="stylesheet" href="css/main.css" />
+    <title>حساب کاربری | PSYCH RASTAR</title>
+  </head>
+  <body>
+    <section class="background">
+      <img class="back" src="images/psych-bg.jpg" alt="" />
+      <p></p>
+    </section>
+
+    <nav class="navbar">
+      <a class="logo" href="index.html"><img class="logo-img" src="images/logo.png" alt="" />OMID <span>RASTAR</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html">خانه</a></li>
+        <li><a href="albums.html">آلبوم‌ها</a></li>
+        <li><a href="shop.html">فروشگاه</a></li>
+        <li><a href="contact.html">تماس</a></li>
+        <li><a class="active" id="navAccount" href="account.html">ورود/ثبت‌نام</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" type="button" aria-label="منو"><span></span><span></span><span></span></button>
+    </nav>
+
+    <main class="content">
+      <section class="page-hero rv">
+        <h1>ورود به <span>پورتال</span></h1>
+        <p>برای خریدِ مرچِ سایکدلیک اول باید وارد ووید بشی. حسابِ پرتالی بساز.</p>
+      </section>
+
+      <section class="account-wrap rv" id="authBox">
+        <div class="auth-card">
+          <div class="auth-tabs">
+            <button class="auth-tab active" id="tabLogin" type="button">ورود</button>
+            <button class="auth-tab" id="tabSignup" type="button">ثبت‌نام</button>
+          </div>
+
+          <form class="auth-form active" id="loginForm" novalidate>
+            <label for="loginEmail">ایمیل</label>
+            <input id="loginEmail" type="text" placeholder="you@void.ir" />
+            <div class="field-error" id="loginError"></div>
+
+            <label for="loginPass">رمز عبور</label>
+            <input id="loginPass" type="password" placeholder="••••••••" />
+            <button class="btn btn-primary" type="submit">ورود به ووید</button>
+          </form>
+
+          <form class="auth-form" id="signupForm" novalidate>
+            <label for="suName">نام پرتالی</label>
+            <input id="suName" type="text" placeholder="مثلاً: سینای سایکدلیک" />
+            <label for="suEmail">ایمیل</label>
+            <input id="suEmail" type="text" placeholder="you@void.ir" />
+            <label for="suPass">رمز عبور</label>
+            <input id="suPass" type="password" placeholder="حداقل ۶ کاراکتر" />
+            <div class="field-error" id="signupError"></div>
+            <button class="btn btn-primary" type="submit">ساخت حساب 🌀</button>
+          </form>
+
+          <p style="margin-top:16px; text-align:center; color:#7a7570; font-size:0.72rem; letter-spacing:1px;">⚠️ نمایشی: اطلاعات فقط تو localStorage مرورگرت ذخیره میشه — بدون بک‌اند.</p>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div class="socials"><a href="#">INSTAGRAM</a><a href="#">YOUTUBE</a><a href="#">SPOTIFY</a><a href="#">SOUNDCLOUD</a></div>
+        © ۱۴۰۴ OMID RASTAR ★ PSYCH PORTAL
+      </footer>
+    </main>
+
+    <script src="js/toast.js"></script>
+    <script src="js/account.js"></script>
+    <script src="js/nav.js"></script>
+    <script src="js/fx.js"></script>
+  </body>
+</html>

@@ -1,0 +1,21 @@
+/* EDIT PROFILE — psych */
+
+.edit-wrap { display:flex; justify-content:center; padding: 0 4vw 70px; }
+
+.edit-card { width: min(92vw, 520px); padding:26px; }
+
+.edit-card h2 { font-size:1.3rem; font-weight:900; margin-bottom:18px; text-align:center; }
+
+.edit-form label { display:block; font-size:0.76rem; letter-spacing:2px; color:#c9c2b5; margin:14px 0 8px; }
+
+.edit-form input {
+  width:100%; padding:13px 15px; border-radius:12px;
+  background: rgba(0,0,0,0.25); border:1px solid rgba(255,255,255,0.12);
+  color:#f7f2e8; outline:none; font-size:0.92rem; transition: all 0.3s; font-family:inherit;
+}
+
+.edit-form .btn { width:100%; margin-top:20px; border:none; }
+
+.avatar-preview { display:flex; justify-content:center; margin-bottom:16px; }
+
+.avatar-preview img { width:96px; height:96px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,45,149,0.4); }

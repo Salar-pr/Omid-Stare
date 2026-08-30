@@ -1,0 +1,23 @@
+/* ORDERS — psych */
+
+.orders-wrap { padding: 0 4vw 70px; display:flex; flex-direction:column; gap:16px; max-width:900px; margin:0 auto; }
+
+.order-card { padding:18px; }
+
+.order-head { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
+
+.o-id { font-weight:900; letter-spacing:1px; }
+
+.o-date { color:#a9a39a; font-size:0.78rem; }
+
+.o-items { display:flex; flex-direction:column; gap:8px; }
+
+.o-item { display:flex; gap:12px; align-items:center; padding:10px; border-radius:12px; background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); }
+
+.o-item img { width:48px; height:48px; border-radius:10px; object-fit:cover; }
+
+.o-item b { flex:1; font-size:0.88rem; }
+
+.o-total { margin-top:12px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(255,255,255,0.08); padding-top:12px; }
+
+.o-total b { background: linear-gradient(90deg, var(--lime), var(--cyan)); -webkit-background-clip:text; background-clip:text; color:transparent; font-size:1.1rem; }

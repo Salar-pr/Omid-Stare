@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="images/logo.png" />
+    <link rel="stylesheet" href="css/main.css" />
+    <title>فروشگاه — OMID RASTAR PSYCH</title>
+  </head>
+  <body>
+    <section class="background">
+      <img loading="lazy" src="images/psych-bg.jpg" alt="" class="back" />
+      <p></p>
+    </section>
+
+    <nav class="navbar">
+      <a class="logo" href="index.html"><img class="logo-img" src="images/logo.png" alt="" />OMID <span>RASTAR</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html">خانه</a></li>
+        <li><a href="albums.html">آلبوم‌ها</a></li>
+        <li><a class="active" href="shop.html">فروشگاه</a></li>
+        <li><a href="contact.html">تماس</a></li>
+        <li><a id="navAccount" href="account.html">ورود/ثبت‌نام</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" type="button" aria-label="منو"><span></span><span></span><span></span></button>
+    </nav>
+
+    <main class="content">
+      <div class="page-hero rv">
+        <h1>مرچِ <span>سایکدلیک</span></h1>
+        <p>مثل دیجی‌کالا ولی تریپی — فیلتر، سایز، رنگ، نظرات، پرسش و پاسخ، موجودی زنده.</p>
+      </div>
+
+      <!-- Breadcrumb -->
+      <div class="breadcrumb rv">
+        <a href="index.html">خانه</a><span>/</span><b>فروشگاه</b>
+      </div>
+
+      <!-- تولبار متصل به ناوبار -->
+      <div class="shop-toolbar rv">
+        <div class="shop-toolbar-inner">
+          <div class="shop-meta">
+            <span class="shop-dot"></span>
+            <span id="productCount">۴</span> محصولِ پرتالی
+          </div>
+          <div class="toolbar-actions">
+            <div class="search-box">
+              <input id="searchInput" type="text" placeholder="جستجو: تیشرت، وینیل..." />
+              <span>⌕</span>
+            </div>
+            <select id="sortSelect" class="sort-select">
+              <option value="featured">پیشنهادی</option>
+              <option value="price-asc">ارزان‌ترین</option>
+              <option value="price-desc">گران‌ترین</option>
+              <option value="rating">محبوب‌ترین</option>
+            </select>
+            <button class="cart-btn" id="cartBtn" type="button">
+              <span class="cart-icon">🛒</span>
+              <span class="cart-count" id="cartCount">0</span>
+            </button>
+            <button class="cart-btn" id="wishlistBtn" type="button" style="padding:10px 12px;">
+              <span>♡</span>
+              <span class="cart-count" id="wishlistCount" style="background:var(--cyan); color:#000;">0</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="shop-layout rv">
+        <!-- فیلتر سایدبار - مثل ایرانی‌ها -->
+        <aside class="filter-sidebar">
+          <div class="filter-card">
+            <h4>دسته‌بندی</h4>
+            <label><input type="checkbox" class="filter-cat" value="همه" checked> همه</label>
+            <label><input type="checkbox" class="filter-cat" value="پوشاک"> پوشاک</label>
+            <label><input type="checkbox" class="filter-cat" value="وینیل"> وینیل</label>
+            <label><input type="checkbox" class="filter-cat" value="اکسسوری"> اکسسوری</label>
+          </div>
+
+          <div class="filter-card">
+            <h4>قیمت (تومان)</h4>
+            <div class="price-range">
+              <input type="range" id="priceRange" min="0" max="4000000" step="100000" value="4000000">
+              <div class="price-range-label">تا <b id="priceRangeVal">۴٬۰۰۰٬۰۰۰</b></div>
+            </div>
+          </div>
+
+          <div class="filter-card">
+            <h4>سایز</h4>
+            <div class="size-chips" id="sizeChips">
+              <button class="size-chip" data-size="S">S</button>
+              <button class="size-chip" data-size="M">M</button>
+              <button class="size-chip" data-size="L">L</button>
+              <button class="size-chip" data-size="XL">XL</button>
+              <button class="size-chip" data-size="XXL">XXL</button>
+            </div>
+            <a href="#" id="sizeGuideLink" style="font-size:0.72rem; color:var(--cyan); margin-top:8px; display:inline-block;">راهنمای سایز ⊘</a>
+          </div>
+
+          <div class="filter-card">
+            <h4>رنگ</h4>
+            <div class="color-dots" id="colorDots">
+              <button class="color-dot" data-color="مشکی" style="background:#0a0a0f" title="مشکی"></button>
+              <button class="color-dot" data-color="ماژنتا" style="background:#ff2d95" title="ماژنتا"></button>
+              <button class="color-dot" data-color="سیان" style="background:#00ffd1" title="سیان"></button>
+              <button class="color-dot" data-color="لایم" style="background:#d9ff00" title="لایم"></button>
+            </div>
+          </div>
+
+          <div class="filter-card">
+            <h4>وضعیت</h4>
+            <label><input type="checkbox" id="inStockOnly"> فقط کالاهای موجود</label>
+          </div>
+
+          <button class="btn btn-ghost" id="clearFilters" type="button" style="width:100%; padding:10px; font-size:0.74rem;">پاک کردن فیلترها</button>
+        </aside>
+
+        <!-- گرید محصولات -->
+        <div class="products" id="productsGrid"></div>
+      </div>
+
+      <!-- مودال راهنمای سایز -->
+      <div class="modal" id="sizeGuideModal" style="display:none;">
+        <div class="modal-content">
+          <button class="modal-close" id="sizeGuideClose">✕</button>
+          <h3>راهنمای سایز — مثل دیجی‌استایل</h3>
+          <p style="color:#a9a39a; font-size:0.84rem; margin:10px 0 14px;">سایزها فیت معمولی هستن، اگه اورسایز دوست داری یه سایز بزرگتر بردار.</p>
+          <table class="size-table">
+            <tr><th>سایز</th><th>عرض سینه</th><th>قد</th></tr>
+            <tr><td>S</td><td>۴۸cm</td><td>۶۸cm</td></tr>
+            <tr><td>M</td><td>۵۱cm</td><td>۷۰cm</td></tr>
+            <tr><td>L</td><td>۵۴cm</td><td>۷۲cm</td></tr>
+            <tr><td>XL</td><td>۵۷cm</td><td>۷۴cm</td></tr>
+            <tr><td>XXL</td><td>۶۰cm</td><td>۷۶cm</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <div class="socials"><a href="#">INSTAGRAM</a><a href="#">YOUTUBE</a><a href="#">SPOTIFY</a><a href="#">SOUNDCLOUD</a></div>
+        © ۱۴۰۴ OMID RASTAR ★ PSYCH MERCH
+      </footer>
+    </main>
+
+    <script src="js/nav.js"></script>
+    <script src="js/toast.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/shop.js"></script>
+    <script src="js/fx.js"></script>
+  </body>
+</html>

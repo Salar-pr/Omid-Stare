@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="images/logo.png" />
+    <link rel="stylesheet" href="css/main.css" />
+    <title>تاریخچه خرید — PSYCH</title>
+  </head>
+  <body>
+    <section class="background">
+      <img class="back" src="images/psych-bg.jpg" alt="" />
+      <p></p>
+    </section>
+
+    <nav class="navbar">
+      <a class="logo" href="index.html"><img class="logo-img" src="images/logo.png" alt="" />OMID <span>RASTAR</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html">خانه</a></li>
+        <li><a href="albums.html">آلبوم‌ها</a></li>
+        <li><a href="shop.html">فروشگاه</a></li>
+        <li><a href="contact.html">تماس</a></li>
+        <li><a class="active" id="navAccount" href="account.html">ورود/ثبت‌نام</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" type="button" aria-label="منو"><span></span><span></span><span></span></button>
+    </nav>
+
+    <main class="content">
+      <section class="page-hero rv">
+        <h1>تاریخچهِ <span>تریپ‌ها</span></h1>
+        <p>هر خرید یه سفرِ ثبت شده تو ووید — از مرچِ نئونی تا وینیلِ پرتالی.</p>
+      </section>
+
+      <section class="orders-wrap rv">
+        <a class="sec-link" href="profile.html" style="margin-bottom:14px; display:inline-flex;">→ برگشت به پروفایل</a>
+
+        <div class="orders-empty" id="ordersEmpty" style="display:none; text-align:center; padding:40px 20px;">
+          <div style="font-size:2.6rem; margin-bottom:12px;">🌀</div>
+          <h2 style="margin-bottom:8px;">هنوز تریپی ثبت نکردی!</h2>
+          <p style="color:#a9a39a; margin-bottom:18px;">اولین خریدت رو بکن تا اینجا به عنوان یه سفر ثبت بشه.</p>
+          <a class="btn btn-primary" href="shop.html">برو به فروشگاه</a>
+        </div>
+
+        <div class="orders-list" id="ordersList"></div>
+      </section>
+
+      <footer class="footer">
+        <div class="socials"><a href="#">INSTAGRAM</a><a href="#">YOUTUBE</a><a href="#">SPOTIFY</a><a href="#">SOUNDCLOUD</a></div>
+        © ۱۴۰۴ OMID RASTAR ★ PSYCH ORDERS
+      </footer>
+    </main>
+
+    <script src="js/toast.js"></script>
+    <script src="js/orders.js"></script>
+    <script src="js/nav.js"></script>
+    <script src="js/fx.js"></script>
+  </body>
+</html>

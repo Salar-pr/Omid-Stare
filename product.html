@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="stylesheet" href="css/main.css">
+<title>جزئیات محصول — OMID RASTAR</title>
+<style>
+/* استایل اختصاصی صفحه محصول - مثل دیجی‌کالا */
+.product-detail-wrap{padding:0 4vw 70px; display:grid; grid-template-columns: 1.1fr 0.9fr; gap:22px; max-width:1240px; margin:0 auto;}
+.gallery{position:sticky; top:96px; display:flex; flex-direction:column; gap:12px;}
+.main-thumb{border-radius:20px; overflow:hidden; background:#111; aspect-ratio:4/3; border:1px solid rgba(255,255,255,0.08);}
+.main-thumb img{width:100%; height:100%; object-fit:cover;}
+.thumbs{display:flex; gap:8px; overflow-x:auto;}
+.thumbs img{width:64px; height:64px; border-radius:10px; object-fit:cover; border:2px solid transparent; cursor:pointer; opacity:0.7; transition: all 0.2s;}
+.thumbs img.active{border-color:var(--magenta); opacity:1; box-shadow:0 0 14px rgba(255,45,149,0.3);}
+.pd-info{display:flex; flex-direction:column; gap:14px;}
+.pd-badge{display:inline-flex; padding:5px 12px; border-radius:999px; background: linear-gradient(100deg,var(--magenta),var(--orange)); color:#fff; font-size:0.68rem; font-weight:900; letter-spacing:1px; width:fit-content;}
+.pd-title{font-size:1.9rem; font-weight:900; line-height:1.3;}
+.pd-en{color:#a9a39a; font-size:0.84rem; letter-spacing:1px; direction:ltr; text-align:right;}
+.pd-rating{display:flex; align-items:center; gap:10px; font-size:0.84rem;}
+.pd-rating .stars{color:var(--amber);}
+.pd-price-box{background: rgba(18,14,36,0.58); border:1px solid rgba(255,255,255,0.08); border-radius:18px; padding:16px;}
+.pd-price{font-size:1.6rem; font-weight:900; background: linear-gradient(90deg,var(--lime),var(--cyan)); -webkit-background-clip:text; background-clip:text; color:transparent;}
+.pd-old{color:#7a7570; text-decoration:line-through; font-size:0.9rem; margin-left:8px;}
+.pd-stock{margin-top:8px; font-size:0.78rem; padding:6px 12px; border-radius:999px; width:fit-content;}
+.pd-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;}
+.size-select{display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;}
+.size-opt{padding:8px 14px; border-radius:999px; border:1px solid rgba(255,255,255,0.14); background: rgba(0,0,0,0.18); color:#c9c2b5; cursor:pointer; font-weight:800; font-size:0.8rem; transition: all 0.2s;}
+.size-opt.active, .size-opt:hover{background:var(--paper); color:#000; border-color:var(--paper);}
+.color-select{display:flex; gap:8px; margin-top:6px;}
+.color-opt{width:32px; height:32px; border-radius:50%; border:2px solid rgba(255,255,255,0.12); cursor:pointer; position:relative; transition: all 0.2s;}
+.color-opt.active{border-color:#fff; box-shadow:0 0 0 2px var(--magenta);}
+.specs-table{width:100%; border-collapse:collapse; margin-top:10px; font-size:0.84rem;}
+.specs-table td{padding:10px 12px; border-bottom:1px solid rgba(255,255,255,0.06);}
+.specs-table td:first-child{color:#a9a39a; width:36%;}
+.tabs{display:flex; gap:8px; margin:26px 0 14px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:10px; overflow-x:auto;}
+.tab-btn{padding:8px 16px; border-radius:999px; border:1px solid rgba(255,255,255,0.10); background: rgba(255,255,255,0.03); color:#c9c2b5; font-size:0.82rem; font-weight:700; cursor:pointer; white-space:nowrap; transition: all 0.2s;}
+.tab-btn.active{background:var(--paper); color:#000; border-color:var(--paper);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+.review-card{background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:14px; margin-bottom:10px;}
+.review-head{display:flex; gap:10px; align-items:center; margin-bottom:8px;}
+.review-avatar{width:32px; height:32px; border-radius:50%; background: linear-gradient(135deg,var(--magenta),var(--purple)); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:0.82rem;}
+.review-meta{font-size:0.76rem; color:#a9a39a;}
+.qa-item{padding:12px 0; border-bottom:1px dashed rgba(255,255,255,0.08);}
+.qa-item b{font-size:0.88rem; display:block; margin-bottom:4px;}
+.qa-item p{color:#c9c2b5; font-size:0.84rem; line-height:1.8;}
+.related-grid{display:grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap:12px; margin-top:12px;}
+.related-card{border-radius:14px; overflow:hidden; background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); padding:8px; transition: all 0.25s; cursor:pointer;}
+.related-card:hover{transform:translateY(-4px); border-color:rgba(255,45,149,0.22);}
+.related-card img{width:100%; aspect-ratio:1; object-fit:cover; border-radius:10px; margin-bottom:8px;}
+.related-card b{font-size:0.84rem; display:block;}
+.related-card small{color:#a9a39a; font-size:0.72rem;}
+@media(max-width:900px){.product-detail-wrap{grid-template-columns:1fr;}.gallery{position:static;}}
+</style>
+</head>
+<body>
+<section class="background">
+  <img src="images/psych-bg.jpg" alt="" class="back" />
+  <p></p>
+</section>
+
+<nav class="navbar">
+  <a class="logo" href="index.html"><img class="logo-img" src="images/logo.png" alt="" />OMID <span>RASTAR</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">خانه</a></li>
+    <li><a href="albums.html">آلبوم‌ها</a></li>
+    <li><a class="active" href="shop.html">فروشگاه</a></li>
+    <li><a href="contact.html">تماس</a></li>
+    <li><a id="navAccount" href="account.html">ورود/ثبت‌نام</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" type="button" aria-label="منو"><span></span><span></span><span></span></button>
+</nav>
+
+<main class="content">
+  <div class="breadcrumb rv" style="padding: 120px 4vw 14px;">
+    <a href="index.html">خانه</a><span>/</span><a href="shop.html">فروشگاه</a><span>/</span><b id="bcName">محصول</b>
+  </div>
+
+  <div class="product-detail-wrap rv" id="pdRoot">
+    <!-- JS میسازه -->
+  </div>
+
+  <footer class="footer">
+    <div class="socials"><a href="#">INSTAGRAM</a><a href="#">YOUTUBE</a><a href="#">SPOTIFY</a><a href="#">SOUNDCLOUD</a></div>
+    © ۱۴۰۴ OMID RASTAR ★ PRODUCT DETAIL
+  </footer>
+</main>
+
+<script src="js/nav.js"></script>
+<script src="js/toast.js"></script>
+<script src="js/products.js"></script>
+<script src="js/product.js"></script>
+<script src="js/fx.js"></script>
+</body>
+</html>

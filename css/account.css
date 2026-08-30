@@ -1,0 +1,36 @@
+/* ACCOUNT — psych */
+
+.account-wrap {
+  display:flex; justify-content:center; padding: 20px 4vw 70px;
+}
+
+.auth-card {
+  width: min(92vw, 440px); padding:26px;
+}
+
+.auth-tabs {
+  display:flex; gap:8px; padding:4px;
+  background: rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:999px; margin-bottom:22px;
+}
+
+.auth-tab {
+  flex:1; padding:10px 16px; border:none; background:transparent;
+  color:#a9a39a; font-weight:800; font-size:0.82rem; letter-spacing:1px;
+  border-radius:999px; cursor:pointer; transition: all 0.3s;
+}
+
+.auth-form { display:none; }
+.auth-form.active { display:block; }
+
+.auth-form label { display:block; font-size:0.76rem; letter-spacing:2px; color:#c9c2b5; margin:14px 0 8px; }
+
+.auth-form input {
+  width:100%; padding:13px 15px; border-radius:12px;
+  background: rgba(0,0,0,0.25); border:1px solid rgba(255,255,255,0.12);
+  color:#f7f2e8; outline:none; font-size:0.92rem; transition: all 0.3s;
+  font-family: inherit;
+}
+
+.auth-form .btn { width:100%; margin-top:18px; border:none; }
