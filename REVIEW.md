@@ -3,6 +3,79 @@
 نتیجه‌ی بازبینی کامل فرانت + بک‌اند + تست E2E واقعی (ثبت‌نام → سبد → کوپن → سفارش).
 همه‌ی موارد پایین **در همین کامیت‌ها فیکس شده‌اند** — جز بخش «پیشنهادهای بعدی».
 
+---
+
+# 🔁 دور دوم — بازبینی خط‌به‌خط
+
+## 🔴 باگ‌های بحرانی جدید
+
+### ۱۰. آپلود آواتار و آپلود ادمین **هیچ‌وقت کار نمی‌کرد** (باگ پنهان)
+`@fastify/multipart` بدون `attachFieldsToBody` ثبت شده بود → `req.body` برای درخواست‌های
+multipart هرگز پر نمی‌شد → هر دو endpoint آپلود فایل را نمی‌دیدند و درخواست را به‌عنوان
+«حذف آواتار» پردازش می‌کردند! تست هم هیچ‌وقت آپلود را پوشش نمی‌داد.
+**فیکس:** `attachFieldsToBody: true` + تست رگرسیون با FormData واقعی + `bodyLimit`
+درست برای دو مسیر آپلود (سقف global 1MB آواتار ۲MBی مجاز را می‌بُرد).
+
+### ۱۱. XSS ذخیره‌شده در نظرات و Q&A
+`rv.user`، `rv.body`، `q.question`، `q.author` (ورودی کاربر) بدون escape با `innerHTML`
+تزریق می‌شدند → کاربر می‌توانست اسکریپت تزریق کند که برای همه‌ی بازدیدکنندگان صفحه‌ی
+محصول اجرا شود. **فیکس:** `escHtml()` در api.js + escape همه‌ی نقاط رندر
+(نظرات، Q&A، سفارش‌ها، فروشگاه، ویش‌لیست، سبد، آلبوم‌ها، صفحه‌ی محصول).
+
+### ۱۲. فونت‌های هویت بصری لود نمی‌شدند
+CSS به "Space Grotesk" و "Vazirmatn" ارجاع می‌داد ولی هیچ `@font-face` یا لینکی به
+Google Fonts در هیچ صفحه‌ای نبود (AUDIT §1 آن را تنها درخواست شبکه‌ی فرانت می‌دانست —
+در ری‌فکتور گم شده بود) → سایت با Tahoma رندر می‌شد. **فیکس:** preconnect + لینک فونت
+با `display=swap` در هر ۱۱ صفحه.
+
+## 🟡 فیکس‌ها و بهینه‌سازی‌های بک‌اند (بدون تغییر منطق)
+
+| مورد | توضیح |
+|---|---|
+| secret کوکی hard-code بود | `COOKIE_SECRET` از env خوانده می‌شود (پیش‌فرض = مقدار قبلی، رفتار عوض نمی‌کند) |
+| sessionهای منقضی هیچ‌وقت پاک نمی‌شدند | cleanup ساعتی fire-and-forget در createSession |
+| `GET /api/cart` در هر درخواست UPSERT می‌نوشت | مسیر داغ (badge همه‌ی صفحات) → حالا read-first؛ یک write حذف شد |
+| `/api/albums` یک کوئری اضافه داشت | count اضافی GROUP BY حذف شد (از داده‌ی خوانده‌شده محاسبه می‌شود) |
+| استاتیک‌ها `max-age=0` بودند | Cache-Control per-type: عکس‌ها ۱ روز، css/js ۱ ساعت، /media هفته + immutable، HTML مثل قبل revalidate |
+
+## ✅ راستی‌آزمایی زنده (npm start + curl)
+
+- ۳۴/۳۴ تست (۳ رگرسیون جدید: users/me، جزئیات سفارش، آپلود آواتار)
+- آپلود آواتار و آپلود ادمین با multipart واقعی → OK + هدر immutable
+- Cache-Control همه‌ی نوع فایل‌ها + gzip (index: 9.4KB → 3KB) + هدرهای helmet
+- کوکی: HttpOnly + SameSite=Lax + Expires=7d ✓
+- کل مسیرها ۲۰۰: عمومی/کاربر/ادمین + هر ۱۱ صفحه
+- سرچ فارسی با URL-encode مرورگر → 200 (بدون encode، خطای ۴۰۰ طبیعی HTTP است)
+- `node --check` روی همه‌ی فایل‌های JS فرانت و سرور ✓
+
+---
+
+# 🚀 چک‌لیست دیپلوی — چی کمه؟ (فقط فهرست؛ طبق خواسته چیزی اضافه نشد)
+
+**ضروری:**
+1. **Reverse proxy + HTTPS** (nginx/caddy + Let's Encrypt) → بدون HTTPS، کوکی `secure`
+   (که در production خودکار فعال است) یعنی **لاگین کار نمی‌کند**. `trustProxy` از قبل روشن است.
+2. **Process manager** — systemd unit یا pm2؛ `npm start` خالی با crash/ریبوت می‌میرد.
+3. **`.env` production** روی سرور: `NODE_ENV=production`، `DATABASE_URL` واقعی،
+   `COOKIE_SECRET` تصادفی طولانی، `APP_URL` با دامنه واقعی، `ADMIN_EMAIL/PASSWORD` جدید.
+4. **PostgreSQL سرور** + یوزر DB قوی + `npm run migrate && npm run seed && npm run create-admin`
+   (هر سه idempotent هستند).
+5. **بکاپ DB** (pg_dump دوره‌ای) + **پایداری `server/uploads/`** روی دیسک دائم (در git نیست، عمداً).
+6. **`npm ci --omit=dev`** روی سرور (lockfile هست — از `npm install` استفاده نکن).
+
+**پیشنهادی:**
+7. مانیتورینگ `/api/health` (آماده است — فقط وصلش کن).
+8. لاگ: stdout → journald/log shipper + rotate.
+9. CI (GitHub Actions با سرویس postgres) — نیست.
+10. Dockerfile / docker-compose — نیست (اختیاری).
+11. robots.txt — نیست (جزئی).
+12. CSP فعلاً خاموش است (inline scriptها زیادند) — بعداً با nonce سفت‌کاری شود.
+13. `README.md` در ریشه‌ی ریپو — نیست (AUDIT و REVIEW و `/api/docs` موجودند).
+
+---
+
+# دور اول — باگ‌هایی که فیکس شدند
+
 ## 🔴 باگ‌های بحرانی (سایت عملاً بالا نمی‌آمد)
 
 ### ۱. ترتیب لود اسکریپت‌ها — همه‌ی صفحه‌ها کرش می‌کردند
