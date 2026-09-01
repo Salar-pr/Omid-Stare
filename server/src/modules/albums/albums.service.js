@@ -51,7 +51,6 @@ async function list(query) {
 
   const ids = rows.map((r) => r.id);
   let tracksByAlbum = new Map();
-  let countsByAlbum = new Map();
   if (ids.length) {
     const tracks = await db
       .select()
@@ -62,16 +61,11 @@ async function list(query) {
       if (!tracksByAlbum.has(t.albumId)) tracksByAlbum.set(t.albumId, []);
       tracksByAlbum.get(t.albumId).push(t);
     }
-    const counts = await db
-      .select({ albumId: albumTracks.albumId, n: sql`count(*)` })
-      .from(albumTracks)
-      .where(and(inArray(albumTracks.albumId, ids), eq(albumTracks.isPublished, true)))
-      .groupBy(albumTracks.albumId);
-    countsByAlbum = new Map(counts.map((c) => [c.albumId, Number(c.n)]));
+    // trackCount از همان داده‌ی خوانده‌شده — کوئری GROUP BY اضافه حذف شد (یک query کمتر در هر request)
   }
 
   return {
-    items: rows.map((r) => toApi(r, tracksByAlbum.get(r.id) || [], countsByAlbum.get(r.id) || 0)),
+    items: rows.map((r) => toApi(r, tracksByAlbum.get(r.id) || [], (tracksByAlbum.get(r.id) || []).length)),
     pagination: toPagination(page, limit, Number(countRows[0].n)),
   };
 }

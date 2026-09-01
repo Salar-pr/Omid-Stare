@@ -21,13 +21,19 @@ const updateItemSchema = z.object({
 });
 
 async function ensureCart(userId) {
-  const { rows } = await pool.query(
-    `INSERT INTO carts (user_id) VALUES ($1)
-     ON CONFLICT (user_id) DO UPDATE SET user_id = EXCLUDED.user_id
-     RETURNING id`,
+  // اول بخوان — GET /api/cart مسیر داغ است (badge هر صفحه) و نباید در هر درخواست write کند
+  const existing = await pool.query('SELECT id FROM carts WHERE user_id = $1', [userId]);
+  if (existing.rows.length) return existing.rows[0].id;
+
+  const inserted = await pool.query(
+    'INSERT INTO carts (user_id) VALUES ($1) ON CONFLICT (user_id) DO NOTHING RETURNING id',
     [userId]
   );
-  return rows[0].id;
+  if (inserted.rows.length) return inserted.rows[0].id;
+
+  // race: request همزمان ساخته → دوباره بخوان
+  const again = await pool.query('SELECT id FROM carts WHERE user_id = $1', [userId]);
+  return again.rows[0].id;
 }
 
 /** آیتم‌ها با snapshot محصول (فقط فیلدهای لازم) + وضعیت stock */
