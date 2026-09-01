@@ -123,7 +123,8 @@
     var isWish = false;
     if (user) {
       API.get("/wishlist").then(function (d) {
-        isWish = (d.data.items || []).some(function (x) { return x.product.id === p.id; });
+        // آیتم‌های ویش‌لیست flat هستند: {id, name, ...}
+        isWish = (d.data.items || []).some(function (x) { return x.id === p.id; });
         wishBtn.textContent = isWish ? "♥" : "♡";
         wishBtn.classList.toggle("active", isWish);
       }, function () {});

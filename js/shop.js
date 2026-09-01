@@ -11,6 +11,7 @@
   var priceRange = document.getElementById("priceRange");
   var priceRangeVal = document.getElementById("priceRangeVal");
   var loadMoreBtn = document.getElementById("loadMoreBtn");
+  var loadMoreWrap = document.getElementById("loadMoreWrap");
   var inStockEl = document.getElementById("inStockOnly");
 
   var fmt = window.fmtNum ? function (n) { return fmtNum(n); } : function (n) { return n; };
@@ -44,7 +45,8 @@
     if (user) {
       API.get("/cart").then(function (d) { updateCartBadge(d.data.count); }, function () {});
       API.get("/wishlist").then(function (d) {
-        wishlistIds = (d.data.items || []).map(function (x) { return x.product.id; });
+        // آیتم‌های ویش‌لیست flat هستند: {id, name, ...}
+        wishlistIds = (d.data.items || []).map(function (x) { return x.id; });
         updateWishBadge(wishlistIds.length);
         render(true);
       }, function () { render(true); });
@@ -112,7 +114,7 @@
           var re = document.getElementById("resetEmpty");
           if (re) re.addEventListener("click", clearAll);
         }
-        if (loadMoreBtn) loadMoreBtn.style.display = state.page < state.totalPages ? "block" : "none";
+        if (loadMoreBtn && loadMoreWrap) loadMoreWrap.style.display = state.page < state.totalPages ? "block" : "none";
       })
       .catch(function (err) {
         if (grid) grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:#ff2d95; padding:30px;">' + API.msg(err, "خطا در بارگذاری محصولات") + "</p>";

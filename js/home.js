@@ -102,19 +102,28 @@
   // welcome portal: فقط ترجیح UI (localStorage مجاز) — آلبوم featured از CMS
   (function () {
     var welcomedKey = "or_welcomed_albums_liquid_void";
-    if (!localStorage.getItem(welcomedKey)) {
-      API.get("/content").then(function (d) {
-        var wa = d.data && d.data.welcome_albums;
-        if (wa && wa.enabled === false) return;
-      }).catch(function () {});
-      setTimeout(function () {
-        localStorage.setItem(welcomedKey, "1");
-        var w = document.getElementById("welcome");
-        if (w) w.remove();
-      }, 4800);
-    } else {
+
+    function removeWelcome() {
       var w = document.getElementById("welcome");
       if (w) w.remove();
+    }
+
+    if (!localStorage.getItem(welcomedKey)) {
+      // اگه ادمین از CMS خاموشش کرده باشه → همین حالا حذف کن و پرچم بزن
+      API.get("/content").then(function (d) {
+        var wa = d.data && d.data.welcome_albums;
+        if (wa && wa.enabled === false) {
+          localStorage.setItem(welcomedKey, "1");
+          removeWelcome();
+        }
+      }).catch(function () {});
+
+      setTimeout(function () {
+        localStorage.setItem(welcomedKey, "1");
+        removeWelcome();
+      }, 4800);
+    } else {
+      removeWelcome();
     }
   })();
 
