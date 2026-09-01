@@ -76,8 +76,8 @@
         grid.innerHTML = items.map(function (p, i) {
           var cls = i === 0 ? "feat-item feat-big rv" : "feat-item rv";
           return '<a class="' + cls + '" href="product.html?slug=' + p.slug + '">' +
-            '<img loading="lazy" src="' + p.image + '" alt="' + p.name + '" />' +
-            '<div class="feat-info"><b>' + p.name + '</b><span>' + fmt(p.price) + " ت</span></div></a>";
+            '<img loading="lazy" src="' + p.image + '" alt="' + escHtml(p.name) + '" />' +
+            '<div class="feat-info"><b>' + escHtml(p.name) + '</b><span>' + fmt(p.price) + " ت</span></div></a>";
         }).join("");
       })
       .catch(function () {});
@@ -92,8 +92,8 @@
         if (!row) return;
         row.innerHTML = items.map(function (a) {
           return '<a class="disc-item" href="albums.html">' +
-            '<img loading="lazy" src="' + a.coverImage + '" alt="' + a.title + '" />' +
-            '<div class="disc-info"><b>' + a.title + "</b><small>" + a.year + "</small></div></a>";
+            '<img loading="lazy" src="' + a.coverImage + '" alt="' + escHtml(a.title) + '" />' +
+            '<div class="disc-info"><b>' + escHtml(a.title) + "</b><small>" + a.year + "</small></div></a>";
         }).join("");
       })
       .catch(function () {});

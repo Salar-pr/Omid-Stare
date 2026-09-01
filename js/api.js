@@ -69,6 +69,19 @@
     msg: toMessage,
   };
 
+  /**
+   * escape متنی که با innerHTML تزریق می‌شود — الزامی برای هر داده‌ای که
+   * کاربر/ادمین وارد کرده (نظر، سوال، نام، آدرس...) تا XSS stored ممکن نباشد.
+   */
+  window.escHtml = function (s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  };
+
   // فرمت قیمت/عدد فارسی (مجموعه‌ای که همه جا استفاده می‌شه)
   window.fmtNum = function (n) {
     try { return new Intl.NumberFormat("fa-IR").format(Number(n) || 0); }

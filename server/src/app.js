@@ -20,15 +20,26 @@ const { fail } = require('./utils/respond');
 const DENY_PREFIXES = ['.git', 'server', 'node_modules', 'deploy', 'test', 'scripts'];
 const DENY_FILES = ['.env', '.env.example', 'docker-compose.yml', 'AUDIT.md'];
 
+// Cache-Control بر اساس نوع فایل — بهینه‌سازی تحویل استاتیک (منطق عوض نمی‌شود)
+// مسیر نسبی فایل روی دیسک (مثل /images/x.jpg) → مقدار هدر
+function cacheHeaderFor(relPath) {
+  if (relPath.startsWith('/images/')) return 'public, max-age=86400';
+  if (relPath.startsWith('/css/') || relPath.startsWith('/js/')) return 'public, max-age=3600';
+  return 'public, max-age=0'; // HTML و بقیه: مثل قبل همیشه revalidate
+}
+
 async function registerStatic(app) {
   fs.mkdirSync(path.join(config.uploadDir, 'avatars'), { recursive: true });
   fs.mkdirSync(path.join(config.uploadDir, 'media'), { recursive: true });
 
-  // /media → uploads (آواتار/عکس‌های admin)
+  // /media → uploads (آواتار/عکس‌های admin) — اسم فایل‌ها UUID است → immutable
   await app.register(staticPlugin, {
     root: config.uploadDir,
     prefix: '/media/',
     decorateReply: false,
+    cacheControl: true,
+    maxAge: 7 * 24 * 3600 * 1000,
+    immutable: true,
   });
 
   // ریشه frontend با guard ضد فاش شدن فایل‌های حساس (server/, .git, .env, ...)
@@ -48,6 +59,11 @@ async function registerStatic(app) {
       index: ['index.html'],
       decorateReply: false,
       wildcard: true,
+      cacheControl: false, // خودمان per-type ست می‌کنیم
+      setHeaders: (raw, filePath) => {
+        const rel = filePath.slice(config.frontendDir.length).replace(/\\/g, '/');
+        raw.setHeader('Cache-Control', cacheHeaderFor(rel));
+      },
     });
   });
 }
@@ -77,9 +93,14 @@ async function buildApp({ logger = true } = {}) {
   });
 
   // ---------- plugins ----------
-  await app.register(cookie, { secret: config.isProd ? 'omid-stare-cookie-signing' : undefined });
+  await app.register(cookie, { secret: config.cookieSecret || undefined });
   await app.register(compress, { threshold: 1024 });
-  await app.register(multipart, { limits: { fileSize: config.maxUploadBytes, files: 5 } });
+  await app.register(multipart, {
+    // بدون این آپشن req.body برای multipart پر نمی‌شد و هر دو endpoint آپلود
+    // (آواتار + آپلود ادمین) عملاً فایل را نمی‌دیدند — باگ پنهان
+    attachFieldsToBody: true,
+    limits: { fileSize: config.maxUploadBytes, files: 5 },
+  });
   await app.register(helmet, {
     // CSP خاموش: frontend فعلی inline script/style زیاد دارد (هویت بصری حفظ می‌شود).
     // بقیه هدرهای امنیتی فعالند.

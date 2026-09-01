@@ -43,7 +43,7 @@
 
     var gallery = p.gallery && p.gallery.length ? p.gallery : [p.image].filter(Boolean);
 
-    var galleryHtml = '<div class="gallery"><div class="main-thumb"><img id="mainImg" src="' + gallery[0] + '" alt="' + p.name + '"></div><div class="thumbs" id="thumbs">';
+    var galleryHtml = '<div class="gallery"><div class="main-thumb"><img id="mainImg" src="' + gallery[0] + '" alt="' + escHtml(p.name) + '"></div><div class="thumbs" id="thumbs">';
     gallery.forEach(function (src, i) {
       galleryHtml += '<img src="' + src + '" data-src="' + src + '" class="' + (i === 0 ? "active" : "") + '" alt="">';
     });
@@ -51,7 +51,7 @@
 
     var colorsHtml = '<div class="color-select">';
     (p.colors || []).forEach(function (c, i) {
-      colorsHtml += '<button class="color-opt ' + (i === 0 ? "active" : "") + '" data-color="' + c.name + '" style="background:' + c.hex + '" title="' + c.name + '"></button>';
+      colorsHtml += '<button class="color-opt ' + (i === 0 ? "active" : "") + '" data-color="' + escHtml(c.name) + '" style="background:' + escHtml(c.hex) + '" title="' + escHtml(c.name) + '"></button>';
     });
     colorsHtml += "</div>";
 
@@ -63,22 +63,22 @@
 
     var specsHtml = '<table class="specs-table">';
     (p.specs || []).forEach(function (row) {
-      specsHtml += "<tr><td>" + row[0] + "</td><td>" + row[1] + "</td></tr>";
+      specsHtml += "<tr><td>" + escHtml(row[0]) + "</td><td>" + escHtml(row[1]) + "</td></tr>";
     });
     specsHtml += "</table>";
 
     var featuresHtml = '<div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">';
     (p.features || []).forEach(function (f) {
-      featuresHtml += '<span class="stock" style="border-color:rgba(255,255,255,0.12); background:rgba(255,255,255,0.04);">' + f + "</span>";
+      featuresHtml += '<span class="stock" style="border-color:rgba(255,255,255,0.12); background:rgba(255,255,255,0.04);">' + escHtml(f) + "</span>";
     });
     featuresHtml += "</div>";
 
     root.innerHTML =
       galleryHtml +
       '<div class="pd-info">' +
-      '<span class="pd-badge">' + (p.badge || "") + '</span>' +
-      '<h1 class="pd-title">' + p.name + '</h1>' +
-      (p.nameEn ? '<div class="pd-en">' + p.nameEn + "</div>" : "") +
+      '<span class="pd-badge">' + escHtml(p.badge || "") + '</span>' +
+      '<h1 class="pd-title">' + escHtml(p.name) + '</h1>' +
+      (p.nameEn ? '<div class="pd-en">' + escHtml(p.nameEn) + "</div>" : "") +
       '<div class="pd-rating"><span class="stars">' + stars + '</span><span>' + (p.rating ? (Math.round(p.rating * 10) / 10) : "–") + '</span><span style="color:#7a7570;">(' + fmt(p.reviewsCount) + ' نظر)</span><a href="#reviews" style="color:var(--cyan); font-size:0.78rem; margin-right:8px;">دیدن نظرات ←</a></div>' +
       '<div class="pd-price-box">' +
       '<div><span class="pd-old">' + (p.compareAtPrice ? fmt(p.compareAtPrice) : "") + '</span><span class="pd-price">' + fmt(p.price) + " تومان</span></div>" +
@@ -167,7 +167,7 @@
     (p.related || []).forEach(function (rp) {
       var rc = document.createElement("div");
       rc.className = "related-card";
-      rc.innerHTML = '<img loading="lazy" src="' + rp.image + '" alt="' + rp.name + '"><b>' + rp.name + "</b><small>" + fmt(rp.price) + " تومان</small>";
+      rc.innerHTML = '<img loading="lazy" src="' + rp.image + '" alt="' + escHtml(rp.name) + '"><b>' + escHtml(rp.name) + "</b><small>" + fmt(rp.price) + " تومان</small>";
       rc.addEventListener("click", function () {
         window.location.href = "product.html?slug=" + rp.slug;
       });
@@ -196,10 +196,10 @@
           box.innerHTML = '<p style="color:#a9a39a; padding:10px 0;">هنوز نظری ثبت نشده — اولین نفر باش 🌀</p>';
         } else {
           box.innerHTML = items.map(function (rv) {
-            var av = (rv.user || "?").trim().charAt(0);
+            var av = (escHtml((rv.user || "?").trim().charAt(0)));
             return '<div class="review-card"><div class="review-head"><div class="review-avatar">' + av + '</div>' +
-              "<div><b style=\"font-size:0.88rem;\">" + rv.user + '</b><div class="review-meta">' + "★".repeat(rv.rating) + " • " + fmtDate(rv.createdAt) + "</div></div></div>" +
-              '<p style="font-size:0.86rem; color:#c9c2b5; line-height:1.8;">' + rv.body + "</p></div>";
+              "<div><b style=\"font-size:0.88rem;\">" + escHtml(rv.user) + '</b><div class="review-meta">' + "★".repeat(rv.rating) + " • " + fmtDate(rv.createdAt) + "</div></div></div>" +
+              '<p style="font-size:0.86rem; color:#c9c2b5; line-height:1.8;">' + escHtml(rv.body) + "</p></div>";
           }).join("");
         }
         renderReviewForm();
@@ -266,8 +266,8 @@
           box.innerHTML = '<p style="color:#a9a39a; padding:10px 0;">سوالی ثبت نشده — بپرس 🎸</p>';
         } else {
           box.innerHTML = items.map(function (q) {
-            return '<div class="qa-item"><b>س: ' + q.question + ' <span style="color:#7a7570; font-weight:400; font-size:0.76rem;">— ' + (q.author || "مهمان") + "</span></b>" +
-              (q.answer ? "<p>ج: " + q.answer + "</p>" : '<p style="color:#7a7570; font-size:0.78rem;">هنوز جواب نشده...</p>') + "</div>";
+            return '<div class="qa-item"><b>س: ' + escHtml(q.question) + ' <span style="color:#7a7570; font-weight:400; font-size:0.76rem;">— ' + escHtml(q.author || "مهمان") + "</span></b>" +
+              (q.answer ? "<p>ج: " + escHtml(q.answer) + "</p>" : '<p style="color:#7a7570; font-size:0.78rem;">هنوز جواب نشده...</p>') + "</div>";
           }).join("");
         }
         renderQAForm();

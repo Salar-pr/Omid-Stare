@@ -38,16 +38,20 @@ async function usersRoutes(app) {
     }
   });
 
-  app.post('/users/me/avatar', async (req, reply) => {
-    try {
-      const parts = req.body || {};
-      const file = parts.file;
-      const result = await userService.uploadAvatar(req, file && typeof file.toBuffer === 'function' ? file : null);
-      return ok(reply, result, result.avatarUrl ? 'عکس پروفایلت آپدیت شد! 🤘' : 'برگشتی به آواتار پیش‌فرض 🖤');
-    } catch (err) {
-      return fail(reply, err, req.log);
+  app.post(
+    '/users/me/avatar',
+    { bodyLimit: config.maxAvatarBytes + 64 * 1024 }, // سقف global (1MB) نباید آواتار ۲MBی مجاز را ببُرد
+    async (req, reply) => {
+      try {
+        const parts = req.body || {};
+        const file = parts.file;
+        const result = await userService.uploadAvatar(req, file && typeof file.toBuffer === 'function' ? file : null);
+        return ok(reply, result, result.avatarUrl ? 'عکس پروفایلت آپدیت شد! 🤘' : 'برگشتی به آواتار پیش‌فرض 🖤');
+      } catch (err) {
+        return fail(reply, err, req.log);
+      }
     }
-  });
+  );
 }
 
 module.exports = usersRoutes;

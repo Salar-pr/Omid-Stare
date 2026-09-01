@@ -22,13 +22,14 @@
     }
 
     var list = cart.items.map(function (it, idx) {
-      var variant = [it.selectedSize, it.selectedColor].filter(Boolean).join(" • ");
+      var variant = escHtml([it.selectedSize, it.selectedColor].filter(Boolean).join(" • "));
+      var nameEsc = escHtml(it.name);
       var stateBadge = it.state === "out"
         ? '<span class="stock out">ناموجود شده</span>'
         : (it.state === "low" ? '<span class="stock low">تنها ' + fmt(it.stock) + ' مانده</span>' : "");
       return '<div class="cart-item" data-idx="' + idx + '">' +
-        '<img src="' + it.image + '" alt="' + it.name + '">' +
-        '<div class="info"><b>' + it.name + (variant ? '<small style="display:block; color:#a9a39a; font-size:0.7rem;">' + variant + "</small>" : "") + "</b>" +
+        '<img src="' + it.image + '" alt="' + nameEsc + '">' +
+        '<div class="info"><b>' + nameEsc + (variant ? '<small style="display:block; color:#a9a39a; font-size:0.7rem;">' + variant + "</small>" : "") + "</b>" +
         "<small>" + fmt(it.unitPrice) + " تومان" + (stateBadge ? " " + stateBadge : "") + "</small></div>" +
         '<div class="qty-box"><button type="button" class="plus" data-id="' + it.id + '">+</button><span>' + fmt(it.quantity) + '</span><button type="button" class="minus" data-id="' + it.id + '">−</button></div>' +
         '<button class="remove-btn" type="button" data-id="' + it.id + '">✕</button>' +

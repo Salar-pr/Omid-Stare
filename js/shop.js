@@ -129,17 +129,18 @@
     var r = Math.round(p.rating || 0);
     var stars = "★".repeat(r) + "☆".repeat(5 - r);
     var desc = (p.description || "").split(/[.。]/)[0] || "";
+    var nameEsc = escHtml(p.name);
 
     var card = document.createElement("div");
     card.className = "product-card";
     card.dataset.id = p.id;
     card.innerHTML =
-      '<span class="badge">' + (p.badge || "") + '</span>' +
+      '<span class="badge">' + escHtml(p.badge || "") + '</span>' +
       '<button class="wishlist-btn ' + (isWish ? "active" : "") + '" data-wish="' + p.id + '" type="button">' + (isWish ? "♥" : "♡") + '</button>' +
-      '<div class="thumb"><img loading="lazy" src="' + p.image + '" alt="' + p.name + '"></div>' +
-      '<h3>' + p.name + '</h3>' +
+      '<div class="thumb"><img loading="lazy" src="' + p.image + '" alt="' + nameEsc + '"></div>' +
+      '<h3>' + nameEsc + '</h3>' +
       '<div class="product-meta"><span class="stars">' + stars + '</span><span>(' + fmt(p.reviewsCount) + ')</span><span class="stock ' + stockClass + '">' + stockText + '</span></div>' +
-      '<p class="desc">' + desc + '</p>' +
+      '<p class="desc">' + escHtml(desc) + '</p>' +
       '<div class="row">' +
       '<div class="price">' + (p.compareAtPrice ? '<span class="old-price">' + fmt(p.compareAtPrice) + '</span>' : '') + fmt(p.price) + ' <small>تومان</small></div>' +
       '<button class="add-btn" type="button" ' + (p.stock === 0 ? "disabled" : "") + '>' + (p.stock === 0 ? "ناموجود" : "افزودن") + '</button>' +

@@ -21,6 +21,20 @@ function generateToken() {
   return crypto.randomBytes(32).toString('hex');
 }
 
+/**
+ * پاک‌سازی دوره‌ای sessionهای منقضی — وگرنه جدول برای همیشه بزرگ می‌شود.
+ * حداکثر یک‌بار در ساعت اجرا می‌شود (fire-and-forget، هیچ مسیری را بلاک نمی‌کند).
+ */
+let lastCleanupAt = 0;
+function maybeCleanupExpired() {
+  const now = Date.now();
+  if (now - lastCleanupAt < 3600 * 1000) return;
+  lastCleanupAt = now;
+  pool
+    .query("DELETE FROM sessions WHERE expires_at < now() - interval '1 day'")
+    .catch(() => {});
+}
+
 async function createSession(userId, req) {
   const token = generateToken();
   const expiresAt = new Date(Date.now() + config.sessionTtlDays * 86400 * 1000);
@@ -28,6 +42,7 @@ async function createSession(userId, req) {
     'INSERT INTO sessions (user_id, token_hash, user_agent, ip, expires_at) VALUES ($1,$2,$3,$4,$5)',
     [userId, sha256(token), (req.headers['user-agent'] || '').slice(0, 256), req.ip, expiresAt]
   );
+  maybeCleanupExpired();
   return { token, expiresAt };
 }
 

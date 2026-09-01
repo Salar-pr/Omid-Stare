@@ -76,3 +76,18 @@ test('جزئیات سفارش: history به camelCase + image آیتم‌ها (�
   assert.strictEqual(h.fromStatus, null);
   assert.ok('actor' in h && 'at' in h);
 });
+
+test('آپلود آواتار: multipart → avatarUrl (رگرسیون attachFieldsToBody)', async () => {
+  const { cookie } = await registerUser(app);
+  const png = Buffer.from(
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg==',
+    'base64'
+  );
+  const fd = new FormData();
+  fd.append('file', new Blob([png], { type: 'image/png' }), 'a.png');
+  const res = await app.inject({ method: 'POST', url: '/api/users/me/avatar', headers: { cookie }, payload: fd });
+  assert.strictEqual(res.statusCode, 200, res.body);
+  const body = res.json();
+  assert.ok(body.success === true);
+  assert.ok(body.data.avatarUrl && body.data.avatarUrl.startsWith('/media/avatars/'), JSON.stringify(body));
+});

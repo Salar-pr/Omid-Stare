@@ -18,14 +18,14 @@
       }
       grid.innerHTML = items.map(function (a) {
         var tracksHtml = (a.tracks || []).map(function (t) {
-          return '<div class="track"><span class="num">' + t.trackNumber + "</span><b>" + t.title + "</b><small>" + durLabel(t.duration) + "</small></div>";
+          return '<div class="track"><span class="num">' + t.trackNumber + "</span><b>" + escHtml(t.title) + "</b><small>" + durLabel(t.duration) + "</small></div>";
         }).join("");
         return '<div class="album-card rv">' +
           '<div class="cover"><div class="vinyl"><div class="vinyl-label"><img loading="lazy" src="' + a.coverImage + '" alt="' + a.title + '" /></div></div></div>' +
           '<div class="album-info">' +
-          "<h3>" + a.title + (a.titleFa ? ' <small style="color:#a9a39a; font-weight:400;">— ' + a.titleFa + "</small>" : "") + "</h3>" +
+          "<h3>" + escHtml(a.title) + (a.titleFa ? ' <small style="color:#a9a39a; font-weight:400;">— ' + escHtml(a.titleFa) + "</small>" : "") + "</h3>" +
           '<div class="album-meta">' + (a.year || "") + " • " + (a.genre || "") + " • " + (a.trackCount != null ? a.trackCount : (a.tracks || []).length) + " TRACKS</div>" +
-          (a.description ? '<p class="album-desc">' + a.description + "</p>" : "") +
+          (a.description ? '<p class="album-desc">' + escHtml(a.description) + "</p>" : "") +
           '<div class="tracklist">' + tracksHtml + "</div>" +
           "</div></div>";
       }).join("");

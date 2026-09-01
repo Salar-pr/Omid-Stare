@@ -39,6 +39,8 @@ const config = {
 
   // Auth / Session
   sessionTtlDays: int(process.env.SESSION_TTL_DAYS, 7),
+  // برای امضای کوکی — قبلاً hard-code بود؛ حالا از env خوانده می‌شود (رفتار پیش‌فرض همان قبلی)
+  cookieSecret: process.env.COOKIE_SECRET || (isProd ? 'omid-stare-cookie-signing' : undefined),
   cookieSecure: process.env.COOKIE_SECURE !== undefined && process.env.COOKIE_SECURE !== ''
     ? boolish(process.env.COOKIE_SECURE, isProd)
     : isProd,

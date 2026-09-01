@@ -5,6 +5,7 @@
  */
 const { ok, created, fail } = require('../../utils/respond');
 const { requireAdmin } = require('../../middlewares/auth');
+const config = require('../../config');
 const dashboard = require('./dashboard.service');
 const products = require('./products.service');
 const orders = require('./orders.service');
@@ -299,15 +300,19 @@ async function adminRoutes(app) {
   });
 
   // ---------- media upload ----------
-  app.post('/upload', async (req, reply) => {
-    try {
-      const parts = req.body || {};
-      const file = parts.file;
-      return created(reply, await media.upload(file), 'فایل آپلود شد');
-    } catch (err) {
-      return fail(reply, err, req.log);
+  app.post(
+    '/upload',
+    { bodyLimit: config.maxUploadBytes + 64 * 1024 }, // سقف global (1MB) نباید آپلود ۵MBی مجاز را ببُرد
+    async (req, reply) => {
+      try {
+        const parts = req.body || {};
+        const file = parts.file;
+        return created(reply, await media.upload(file), 'فایل آپلود شد');
+      } catch (err) {
+        return fail(reply, err, req.log);
+      }
     }
-  });
+  );
 
   // ---------- notifications (unread admin events) ----------
   const { pool } = require('../../db/client');

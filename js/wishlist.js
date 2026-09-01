@@ -29,8 +29,8 @@
       var r = Math.round(p.rating || 0);
       card.innerHTML =
         '<button class="remove-wish" data-id="' + p.id + '" type="button" title="حذف از علاقه‌مندی‌ها">✕</button>' +
-        '<div class="thumb"><img loading="lazy" src="' + p.image + '" alt="' + p.name + '"></div>' +
-        "<h3>" + p.name + "</h3>" +
+        '<div class="thumb"><img loading="lazy" src="' + p.image + '" alt="' + escHtml(p.name) + '"></div>' +
+        "<h3>" + escHtml(p.name) + "</h3>" +
         '<div class="product-meta"><span class="stars">' + "★".repeat(r) + '</span><span>' + (p.rating || "–") + " • " + fmt(p.reviewsCount) + " نظر</span></div>" +
         '<div class="row"><div class="price">' + fmt(p.price) + ' <small>تومان</small></div><div style="display:flex; gap:6px;"><button class="btn btn-ghost" data-remove="' + p.id + '" type="button" style="padding:8px 12px; font-size:0.72rem;">حذف</button><button class="add-btn" type="button">افزودن به سبد</button></div></div>';
 

@@ -78,21 +78,21 @@
         db.innerHTML =
           '<div class="o-items">' +
           o.items.map(function (it) {
-            var variant = [it.selectedSize, it.selectedColor].filter(Boolean).join(" • ");
+            var variant = escHtml([it.selectedSize, it.selectedColor].filter(Boolean).join(" • "));
             return '<div class="o-item">' + (it.image ? '<img src="' + it.image + '" alt="">' : "") +
-              "<b>" + it.productName + (variant ? ' <small style="color:#a9a39a;">(' + variant + ")</small>" : "") + "</b>" +
+              "<b>" + escHtml(it.productName) + (variant ? ' <small style="color:#a9a39a;">(' + variant + ")</small>" : "") + "</b>" +
               "<span>×" + fmt(it.quantity) + "</span><span>" + fmt(it.lineTotal) + " ت</span></div>";
           }).join("") +
           "</div>" +
           '<div style="margin-top:10px; font-size:0.78rem; color:#a9a39a;">' +
-          (o.shippingAddress ? "آدرس: " + o.shippingAddress + " — " : "") +
-          (o.customerPhone ? 'موبایل: <span dir="ltr">' + o.customerPhone + "</span>" : "") +
+          (o.shippingAddress ? "آدرس: " + escHtml(o.shippingAddress) + " — " : "") +
+          (o.customerPhone ? 'موبایل: <span dir="ltr">' + escHtml(o.customerPhone) + "</span>" : "") +
           "</div>" +
           '<div style="margin-top:10px;"><b style="font-size:0.78rem; color:#c9c2b5;">تاریخچه سفارش:</b><ul style="list-style:none; padding:0; margin:6px 0 0;">' +
           o.history.map(function (h) {
             return "<li style=\"font-size:0.75rem; color:#7a7570; padding:3px 0;\">" +
-              (h.fromStatus ? h.fromStatus + " → " : "") + h.toStatus +
-              " — " + (h.actor || "") + (h.note ? ' ("' + h.note + '")' : "") +
+              (h.fromStatus ? escHtml(h.fromStatus) + " → " : "") + escHtml(h.toStatus) +
+              " — " + escHtml(h.actor || "") + (h.note ? ' ("' + escHtml(h.note) + '")' : "") +
               " — " + fmtDate(h.at) + "</li>";
           }).join("") +
           "</ul></div>";
