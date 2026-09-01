@@ -1,0 +1,192 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "OMID RASTAR PSYCH — API",
+    "version": "1.0.0",
+    "description": "Fastify + PostgreSQL + Drizzle. Response format یکدست: { success, data, message } | { success:false, error:{code,message} }"
+  },
+  "servers": [{ "url": "/" }],
+  "tags": [
+    { "name": "health" },
+    { "name": "auth" },
+    { "name": "users" },
+    { "name": "products" },
+    { "name": "albums" },
+    { "name": "cart" },
+    { "name": "orders" },
+    { "name": "wishlist" },
+    { "name": "coupons" },
+    { "name": "contact" },
+    { "name": "content" },
+    { "name": "reviews" },
+    { "name": "questions" },
+    { "name": "admin" }
+  ],
+  "components": {
+    "securitySchemes": {
+      "cookieAuth": { "type": "apiKey", "in": "cookie", "name": "sid" }
+    }
+  },
+  "paths": {
+    "/api/health": { "get": { "tags": ["health"], "summary": "Health + DB status", "responses": { "200": { "description": "ok" } } } },
+    "/api/auth/register": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "ثبت‌نام (auto-login)",
+        "requestBody": { "content": { "application/json": { "schema": { "type": "object", "properties": { "name": { "type": "string" }, "email": { "type": "string" }, "password": { "type": "string" } } } } } },
+        "responses": { "201": { "description": "user + set-cookie sid" }, "409": { "description": "EMAIL_TAKEN" } }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "ورود",
+        "requestBody": { "content": { "application/json": { "schema": { "type": "object", "properties": { "email": { "type": "string" }, "password": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "user + set-cookie sid" }, "401": { "description": "UNAUTHORIZED (generic)" } }
+      }
+    },
+    "/api/auth/logout": { "post": { "tags": ["auth"], "summary": "خروج (revoke session)", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "ok" } } } },
+    "/api/auth/me": { "get": { "tags": ["auth"], "summary": "کاربر فعلی", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "user" } } } },
+    "/api/users/me": {
+      "get": { "tags": ["users"], "summary": "پروفایل + آمار + کدهای من", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "{user, counts, coupons}" } } },
+      "patch": { "tags": ["users"], "summary": "تغییر نام", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "user" } } }
+    },
+    "/api/users/me/change-password": { "post": { "tags": ["users"], "summary": "تغییر رمز", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "ok" } } } },
+    "/api/users/me/avatar": { "post": { "tags": ["users"], "summary": "آپلود آواتار (multipart field=file) یا پاک کردن", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "{avatarUrl}" } } } },
+    "/api/products": {
+      "get": {
+        "tags": ["products"],
+        "summary": "لیست محصولات (search/filter/sort/pagination)",
+        "parameters": [
+          { "name": "search", "in": "query", "schema": { "type": "string" } },
+          { "name": "categories", "in": "query", "schema": { "type": "string" }, "description": "csv" },
+          { "name": "minPrice", "in": "query", "schema": { "type": "integer" } },
+          { "name": "maxPrice", "in": "query", "schema": { "type": "integer" } },
+          { "name": "sizes", "in": "query", "schema": { "type": "string" }, "description": "csv" },
+          { "name": "colors", "in": "query", "schema": { "type": "string" }, "description": "csv" },
+          { "name": "inStock", "in": "query", "schema": { "type": "string", "enum": ["0", "1"] } },
+          { "name": "slugs", "in": "query", "schema": { "type": "string" }, "description": "csv (featured)" },
+          { "name": "sort", "in": "query", "schema": { "type": "string", "enum": ["featured", "price-asc", "price-desc", "rating", "newest"] } },
+          { "name": "page", "in": "query", "schema": { "type": "integer" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": { "200": { "description": "{items, pagination}" } }
+      }
+    },
+    "/api/products/{idOrSlug}": { "get": { "tags": ["products"], "summary": "جزئیات محصول (+related)", "parameters": [{ "name": "idOrSlug", "in": "path", "required": true, "schema": { "type": "string" } }], "responses": { "200": { "description": "product" }, "404": { "description": "NOT_FOUND" } } } },
+    "/api/products/{productId}/reviews": {
+      "get": { "tags": ["reviews"], "summary": "نظرات تأییدشده", "responses": { "200": { "description": "items" } } },
+      "post": { "tags": ["reviews"], "summary": "ثبت نظر (فقط خریدار)", "security": [{ "cookieAuth": [] }], "responses": { "201": { "description": "await moderation" } } }
+    },
+    "/api/products/{productId}/questions": {
+      "get": { "tags": ["questions"], "summary": "سوال‌های منتشرشده", "responses": { "200": { "description": "items" } } },
+      "post": { "tags": ["questions"], "summary": "پرسیدن سوال (مهمان با authorName)", "responses": { "201": { "description": "ok" } } }
+    },
+    "/api/albums": { "get": { "tags": ["albums"], "summary": "آلبوم‌های منتشرشده + tracks", "responses": { "200": { "description": "{items, pagination}" } } } },
+    "/api/albums/{id}": { "get": { "tags": ["albums"], "summary": "جزئیات آلبوم", "responses": { "200": { "description": "album+tracks" } } } },
+    "/api/cart": {
+      "get": { "tags": ["cart"], "summary": "سبد من (قیمت/موجودی از DB)", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "{items, subtotal, count}" } } },
+      "delete": { "tags": ["cart"], "summary": "خالی کردن سبد", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "ok" } } }
+    },
+    "/api/cart/items": { "post": { "tags": ["cart"], "summary": "افزودن آیتم {productId, quantity, selectedSize?, selectedColor?}", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "ok" }, "400": { "description": "INSUFFICIENT_STOCK / ValidationError" } } } },
+    "/api/cart/items/{id}": {
+      "patch": { "tags": ["cart"], "summary": "تغییر qty/variant", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "ok" } } },
+      "delete": { "tags": ["cart"], "summary": "حذف آیتم", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "ok" } } }
+    },
+    "/api/cart/quote": { "get": { "tags": ["cart"], "summary": "پیش‌نمایش تخفیف ?couponId=", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "{subtotal, discountAmount, total, coupon}" } } } },
+    "/api/orders": {
+      "post": {
+        "tags": ["orders"],
+        "summary": "ثبت سفارش از سبد (transaction + stock + coupon). قیمت سمت کلاینت trust نمی‌شود.",
+        "security": [{ "cookieAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customerName": { "type": "string" },
+                  "customerPhone": { "type": "string" },
+                  "customerEmail": { "type": "string" },
+                  "shippingAddress": { "type": "string" },
+                  "city": { "type": "string" },
+                  "postalCode": { "type": "string" },
+                  "notes": { "type": "string" },
+                  "couponId": { "type": "string", "description": "از /api/coupons/my" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "order" }, "400": { "description": "EMPTY_CART / INSUFFICIENT_STOCK / INVALID_COUPON ..." } }
+      },
+      "get": { "tags": ["orders"], "summary": "سفارش‌های من (paginated)", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "{items, pagination}" } } }
+    },
+    "/api/orders/{id}": { "get": { "tags": ["orders"], "summary": "جزئیات سفارش (فقط مالک)", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "order+items+history" } } } },
+    "/api/wishlist": {
+      "get": { "tags": ["wishlist"], "summary": "ویش‌لیست من", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "{items}" } } },
+      "delete": { "tags": ["wishlist"], "summary": "پاک کردن همه", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "ok" } } }
+    },
+    "/api/wishlist/{productId}": {
+      "post": { "tags": ["wishlist"], "summary": "افزودن (idempotent)", "security": [{ "cookieAuth": [] }], "responses": { "201": { "description": "ok" } } },
+      "delete": { "tags": ["wishlist"], "summary": "حذف", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "ok" } } }
+    },
+    "/api/coupons/claim": {
+      "post": {
+        "tags": ["coupons"],
+        "summary": "CLAIM کد (rate-limited). کد raw در DB نیست؛ اینجا هم در log نیست.",
+        "security": [{ "cookieAuth": [] }],
+        "requestBody": { "content": { "application/json": { "schema": { "type": "object", "properties": { "code": { "type": "string" } } } } } },
+        "responses": { "200": { "description": "coupon view (last4 فقط)" }, "400": { "description": "INVALID_COUPON" }, "409": { "description": "COUPON_TAKEN" } }
+      }
+    },
+    "/api/coupons/my": { "get": { "tags": ["coupons"], "summary": "کدهای من (active/expired/redeemed)", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "{items}" } } } },
+    "/api/contact": { "post": { "tags": ["contact"], "summary": "ارسال پیام تماس (rate-limited)", "responses": { "201": { "description": "ok" }, "400": { "description": "ValidationError" } } } },
+    "/api/content": { "get": { "tags": ["content"], "summary": "محتوای site (hero/manifest/contact/socials/featured/welcome)", "responses": { "200": { "description": "{key: jsonb}" } } } },
+    "/api/admin/dashboard": { "get": { "tags": ["admin"], "summary": "آمار واقعی dashboard", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "stats" }, "403": { "description": "FORBIDDEN" } } } },
+    "/api/admin/users": { "get": { "tags": ["admin"], "summary": "لیست کاربران", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "{items, pagination}" } } } },
+    "/api/admin/users/{id}": { "patch": { "tags": ["admin"], "summary": "تغییر role/active", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "user" } } } },
+    "/api/admin/products": {
+      "get": { "tags": ["admin"], "summary": "لیست محصولات (همه)", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "items" } } },
+      "post": { "tags": ["admin"], "summary": "ساخت محصول", "security": [{ "cookieAuth": [] }], "responses": { "201": { "description": "product" } } }
+    },
+    "/api/admin/products/{id}": {
+      "patch": { "tags": ["admin"], "summary": "ویرایش محصول", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "product" } } },
+      "delete": { "tags": ["admin"], "summary": "حذف (archive) یا ?hard=1", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "ok" } } }
+    },
+    "/api/admin/albums": {
+      "get": { "tags": ["admin"], "summary": "لیست آلبوم‌ها", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "items" } } },
+      "post": { "tags": ["admin"], "summary": "ساخت آلبوم", "security": [{ "cookieAuth": [] }], "responses": { "201": { "description": "{id}" } } }
+    },
+    "/api/admin/albums/{id}": {
+      "patch": { "tags": ["admin"], "summary": "ویرایش آلبوم", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "ok" } } },
+      "delete": { "tags": ["admin"], "summary": "حذف (unpublish) یا ?hard=1", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "ok" } } }
+    },
+    "/api/admin/albums/{id}/tracks": {
+      "get": { "tags": ["admin"], "summary": "tracks آلبوم", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "items" } } },
+      "post": { "tags": ["admin"], "summary": "افزودن ترک", "security": [{ "cookieAuth": [] }], "responses": { "201": { "description": "{id}" } } }
+    },
+    "/api/admin/orders": { "get": { "tags": ["admin"], "summary": "لیست سفارش‌ها (status/payment/search filter)", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "{items, pagination}" } } } },
+    "/api/admin/orders/{id}": { "get": { "tags": ["admin"], "summary": "جزئیات سفارش", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "order full" } } } },
+    "/api/admin/orders/{id}/status": {
+      "patch": { "tags": ["admin"], "summary": "تغییر status/payment (+history actor+time)", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "order" }, "400": { "description": "INVALID_TRANSITION" } } }
+    },
+    "/api/admin/coupons/campaigns": {
+      "get": { "tags": ["admin"], "summary": "کمپین‌ها", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "items" } } },
+      "post": { "tags": ["admin"], "summary": "ساخت کمپین + generate کدها (raw codes یک‌بار در response)", "security": [{ "cookieAuth": [] }], "responses": { "201": { "description": "{campaignId, codes[]}" } } }
+    },
+    "/api/admin/coupons/campaigns/{id}/codes": { "post": { "tags": ["admin"], "summary": "تولید کد بیشتر", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "{codes[]}" } } } },
+    "/api/admin/messages": { "get": { "tags": ["admin"], "summary": "پیام‌های تماس", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "items" } } } },
+    "/api/admin/messages/{id}": {
+      "patch": { "tags": ["admin"], "summary": "تغییر status (unread/read/archived)", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "ok" } } },
+      "delete": { "tags": ["admin"], "summary": "حذف پیام", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "ok" } } }
+    },
+    "/api/admin/content": { "get": { "tags": ["admin"], "summary": "کلیدهای محتوا", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "{key: value}" } } } },
+    "/api/admin/content/{key}": { "put": { "tags": ["admin"], "summary": "ذخیره محتوا {value: {...}}", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "ok" } } } },
+    "/api/admin/reviews": { "get": { "tags": ["admin"], "summary": "نظرات (moderation)", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "items" } } } },
+    "/api/admin/reviews/{id}": { "patch": { "tags": ["admin"], "summary": "approve/reject {isApproved}", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "ok" } } } },
+    "/api/admin/questions": { "get": { "tags": ["admin"], "summary": "سوال‌ها", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "items" } } } },
+    "/api/admin/questions/{id}": { "patch": { "tags": ["admin"], "summary": "جواب دادن {answer, isPublished}", "security": [{ "cookieAuth": [] }], "responses": { "200": { "description": "ok" } } } },
+    "/api/admin/upload": { "post": { "tags": ["admin"], "summary": "آپلود رسانه (multipart field=file)", "security": [{ "cookieAuth": [] }], "responses": { "201": { "description": "{url}" } } } }
+  }
+}

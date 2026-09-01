@@ -1,38 +1,46 @@
-// PROFILE.JS — nemone-4 psych
-(function(){
-  var SESSION_KEY="or_session";
-  function getSession(){ try{ return JSON.parse(localStorage.getItem(SESSION_KEY)); }catch(e){ return null; } }
-  var session=getSession();
-  if(!session){ window.location.replace("account.html"); return; }
-  var fmt=new Intl.NumberFormat("fa-IR");
-  document.getElementById("profileName").textContent=session.name;
-  document.getElementById("profileEmail").textContent=session.email;
-  document.getElementById("profileUsername").textContent="@"+session.email.split("@")[0];
-  var saved=localStorage.getItem("or_avatar_"+session.email);
-  if(saved) document.getElementById("avatarImg").src=saved;
+// PROFILE.JS — پروفایل (داده از /api/users/me)
+(function () {
+  var fmt = window.fmtNum;
+  var user = null;
 
-  try{
-    var orders=JSON.parse(localStorage.getItem("or_orders_"+session.email))||[];
-    document.getElementById("statOrders").textContent=fmt.format(orders.length);
-    if(orders.length) document.getElementById("ordersHint").textContent=fmt.format(orders.length)+" سفر ثبت‌شده";
-  }catch(e){}
+  API.me().then(function (u) {
+    user = u;
+    if (!user) { window.location.replace("account.html"); return; }
 
-  try{
-    var cart=JSON.parse(localStorage.getItem("or_cart_"+session.email))||[];
-    var qty=cart.reduce(function(s,it){ return s+it.qty; },0);
-    document.getElementById("statCart").textContent=fmt.format(qty);
-    if(qty) document.getElementById("cartHint").textContent=fmt.format(qty)+" آیتم تو ووید";
-  }catch(e){}
+    document.getElementById("profileName").textContent = user.name;
+    document.getElementById("profileEmail").textContent = user.email;
+    document.getElementById("profileUsername").textContent = "@" + user.email.split("@")[0];
+    if (user.avatarUrl) document.getElementById("avatarImg").src = user.avatarUrl;
 
-  try{
-    var wish=JSON.parse(localStorage.getItem("or_wish_"+session.email))||[];
-    var wh=document.getElementById("wishHint");
-    if(wh && wish.length) wh.textContent=fmt.format(wish.length)+" آیتم تو ویش‌لیست ♡";
-  }catch(e){}
+    // آمار + کوپن‌های من
+    API.get("/users/me").then(function (d) {
+      var me = d.data;
+      var c = me.counts || {};
+      if (c.orders != null) {
+        document.getElementById("statOrders").textContent = fmt(c.orders);
+        if (c.orders) document.getElementById("ordersHint").textContent = fmt(c.orders) + " سفر ثبت‌شده";
+      }
+      if (c.cart_qty != null) {
+        document.getElementById("statCart").textContent = fmt(c.cart_qty);
+        if (c.cart_qty) document.getElementById("cartHint").textContent = fmt(c.cart_qty) + " آیتم تو ووید";
+      }
+      if (c.wishlist != null) {
+        var wh = document.getElementById("wishHint");
+        if (wh && c.wishlist) wh.textContent = fmt(c.wishlist) + " آیتم تو ویش‌لیست ♡";
+      }
+      if (c.active_coupons) {
+        var el = document.getElementById("couponHint");
+        if (el) el.textContent = fmt(c.active_coupons) + " کد تخفیف فعال 🎟️";
+      }
+    }).catch(function () {});
 
-  document.getElementById("logoutBtn").addEventListener("click", function(){
-    localStorage.removeItem(SESSION_KEY);
-    if(window.showToast) window.showToast("از ووید خارج شدی. پرتال همیشه بازه 🌀");
-    setTimeout(function(){ window.location.href="account.html"; }, 900);
+    document.getElementById("logoutBtn").addEventListener("click", function () {
+      API.post("/auth/logout")
+        .catch(function () {})
+        .finally(function () {
+          if (window.showToast) window.showToast("از ووید خارج شدی. پرتال همیشه بازه 🌀");
+          setTimeout(function () { window.location.href = "account.html"; }, 700);
+        });
+    });
   });
 })();
