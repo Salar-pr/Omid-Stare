@@ -60,7 +60,7 @@ async function getMe(req) {
       createdAt: req.user.created_at,
     },
     counts: counts.rows[0],
-    coupons: coupons.rows.map((r) => ({
+    coupons: coupons.map((r) => ({
       id: r.id,
       codeLast4: r.code_last4,
       campaignName: r.campaign_name,

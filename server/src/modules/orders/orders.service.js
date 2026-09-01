@@ -262,8 +262,11 @@ async function getOrderFull(orderId) {
   );
   if (!rows.length) return null;
   const { rows: items } = await pool.query(
-    `SELECT id, product_id, product_name_snapshot, unit_price, quantity, selected_size, selected_color, line_total
-       FROM order_items WHERE order_id = $1 ORDER BY id`,
+    `SELECT oi.id, oi.product_id, oi.product_name_snapshot, oi.unit_price, oi.quantity,
+            oi.selected_size, oi.selected_color, oi.line_total, p.image AS image
+       FROM order_items oi
+       LEFT JOIN products p ON p.id = oi.product_id
+      WHERE oi.order_id = $1 ORDER BY oi.id`,
     [orderId]
   );
   const { rows: history } = await pool.query(
@@ -271,7 +274,18 @@ async function getOrderFull(orderId) {
        FROM order_status_history WHERE order_id = $1 ORDER BY created_at`,
     [orderId]
   );
-  return { ...mapOrder(rows[0]), items: mapItems(items), history };
+  return {
+    ...mapOrder(rows[0]),
+    items: mapItems(items),
+    // مثل بقیه‌ی API به camelCase نگاشت کن — فرانت به fromStatus/toStatus/actor/at خوانده می‌شود
+    history: history.map((h) => ({
+      fromStatus: h.from_status,
+      toStatus: h.to_status,
+      actor: h.actor_name,
+      note: h.note,
+      at: h.created_at,
+    })),
+  };
 }
 
 function mapItems(rows) {
@@ -279,6 +293,7 @@ function mapItems(rows) {
     id: r.id,
     productId: r.product_id,
     productName: r.product_name_snapshot,
+    image: r.image || null,
     unitPrice: r.unit_price,
     quantity: r.quantity,
     selectedSize: r.selected_size,
