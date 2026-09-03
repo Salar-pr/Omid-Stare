@@ -1,133 +1,43 @@
-// ALBUMS.JS — آلبوم‌ها از API (دیسک + tracklist واقعی) + ریل خرید سمت چپ کارت
+// ALBUMS.JS — آلبوم‌ها از API + نوار خرید افقی زیر هر کارت
 (function () {
   var grid = document.getElementById("albums");
   if (!grid) return;
 
+  var K = window.AlbumKit;
   var fmt = window.fmtNum || function (n) { return n; };
   var user = null;
-  var productsByAlbum = {};   // albumId -> product
-  var cartCount = 0;
-
-  function durLabel(sec) {
-    sec = Number(sec) || 0;
-    var m = Math.floor(sec / 60), s = sec % 60;
-    return m + ":" + (s < 10 ? "0" : "") + s;
-  }
-
-  function norm(s) {
-    return String(s || "").toLowerCase().replace(/[\u200c\s\-—_.]/g, "");
-  }
-
-  // محصول مرتبط با آلبوم را از روی نام پیدا می‌کند (وینیل/CD همان آلبوم)
-  function matchProduct(album, products) {
-    var t = norm(album.title), tf = norm(album.titleFa);
-    var best = null;
-    products.forEach(function (p) {
-      var hay = norm(p.name) + "|" + norm(p.nameEn) + "|" + norm(p.slug);
-      var hit = (t && hay.indexOf(t) > -1) || (tf && hay.indexOf(tf) > -1);
-      if (!hit) return;
-      if (!best) { best = p; return; }
-      // اولویت با دسته‌ی وینیل/موسیقی
-      var isVinyl = /وینیل|vinyl|cd|آلبوم/i.test(p.category + " " + p.name);
-      var bestVinyl = /وینیل|vinyl|cd|آلبوم/i.test(best.category + " " + best.name);
-      if (isVinyl && !bestVinyl) best = p;
-    });
-    return best;
-  }
-
-  function buyRail(album) {
-    var p = productsByAlbum[album.id];
-    if (!p) {
-      return '<aside class="album-buy">' +
-        '<div class="ab-title">نسخه فیزیکی</div>' +
-        '<div class="ab-soon">به‌زودی 🌀</div>' +
-        '</aside>';
-    }
-    var out = p.stock === 0;
-    return '<aside class="album-buy" data-pid="' + p.id + '">' +
-      '<div class="ab-title">' + escHtml(p.name) + '</div>' +
-      '<div class="ab-price">' +
-      (p.compareAtPrice ? '<span class="ab-old">' + fmt(p.compareAtPrice) + '</span>' : '') +
-      fmt(p.price) + ' <small>تومان</small></div>' +
-      '<div class="ab-stock ' + (out ? 'out' : (p.stock < 6 ? 'low' : '')) + '">' +
-      (out ? 'ناموجود' : (p.stock < 6 ? 'تنها ' + fmt(p.stock) + ' عدد' : 'موجود')) + '</div>' +
-      '<div class="ab-qty"><button type="button" class="ab-minus">−</button><span class="ab-q">1</span><button type="button" class="ab-plus">+</button></div>' +
-      '<button class="btn btn-primary ab-add" type="button"' + (out ? ' disabled' : '') + '>' +
-      (out ? 'ناموجود' : 'افزودن به سبد 🛒') + '</button>' +
-      '<a class="ab-link" href="product.html?slug=' + encodeURIComponent(p.slug) + '">جزئیات محصول ←</a>' +
-      '</aside>';
-  }
+  var productsByAlbum = {};
 
   function cardHtml(a) {
-    var tracksHtml = (a.tracks || []).map(function (t) {
-      return '<div class="track"><span class="num">' + t.trackNumber + "</span><b>" + escHtml(t.title) + "</b><small>" + durLabel(t.duration) + "</small></div>";
+    var tracks = a.tracks || [];
+    var shown = tracks.slice(0, 4);
+    var tracksHtml = shown.map(function (t) {
+      return '<div class="track"><span class="num">' + t.trackNumber + "</span><b>" + escHtml(t.title) + "</b><small>" + K.durLabel(t.duration) + "</small></div>";
     }).join("");
+    var count = a.trackCount != null ? a.trackCount : tracks.length;
+    var more = count > shown.length ? '<a class="track-more" href="album.html?id=' + a.id + '">+ ' + fmt(count - shown.length) + " ترک دیگه — دیدن جزئیات آلبوم ←</a>" : "";
+
     return '<div class="album-card rv" data-album="' + a.id + '">' +
-      buyRail(a) +
-      '<div class="album-main">' +
-      '<div class="cover"><div class="vinyl"><div class="vinyl-label"><img loading="lazy" src="' + a.coverImage + '" alt="' + escHtml(a.title) + '" /></div></div></div>' +
+      '<a class="cover" href="album.html?id=' + a.id + '"><div class="vinyl"><div class="vinyl-label"><img loading="lazy" src="' + a.coverImage + '" alt="' + escHtml(a.title) + '" /></div></div></a>' +
       '<div class="album-info">' +
-      "<h3>" + escHtml(a.title) + (a.titleFa ? ' <small style="color:#a9a39a; font-weight:400;">— ' + escHtml(a.titleFa) + "</small>" : "") + "</h3>" +
-      '<div class="album-meta">' + (a.year || "") + " • " + (a.genre || "") + " • " + (a.trackCount != null ? a.trackCount : (a.tracks || []).length) + " TRACKS</div>" +
+      '<h3><a class="album-title-link" href="album.html?id=' + a.id + '">' + escHtml(a.title) + "</a>" +
+      (a.titleFa ? ' <small style="color:#a9a39a; font-weight:400;">— ' + escHtml(a.titleFa) + "</small>" : "") + "</h3>" +
+      '<div class="album-meta"><span>' + (a.year || "") + "</span><span>" + escHtml(a.genre || "") + "</span><span>" + count + " TRACKS</span></div>" +
       (a.description ? '<p class="album-desc">' + escHtml(a.description) + "</p>" : "") +
-      '<div class="tracklist">' + tracksHtml + "</div>" +
-      "</div></div></div>";
+      '<div class="tracklist">' + tracksHtml + more + "</div>" +
+      '<a class="btn btn-ghost album-detail-btn" href="album.html?id=' + a.id + '">جزئیات آلبوم 👁️</a>' +
+      "</div>" +
+      K.buyBarHtml(productsByAlbum[a.id]) +
+      "</div>";
   }
 
   function updateBadge(n) {
-    cartCount = n;
     var b = document.getElementById("albumsCartCount");
     if (b) { b.textContent = fmt(n); b.classList.toggle("show", n > 0); }
   }
 
-  function needAuth(msg) {
-    if (window.showToast) window.showToast(msg, true);
-    setTimeout(function () { window.location.href = "account.html"; }, 1200);
-  }
+  K.bindBuyBar(grid, { getUser: function () { return user; }, onCart: updateBadge });
 
-  // ---------- تعامل ریل خرید ----------
-  grid.addEventListener("click", function (e) {
-    var rail = e.target.closest(".album-buy");
-    if (!rail) return;
-    var qEl = rail.querySelector(".ab-q");
-
-    if (e.target.closest(".ab-plus") || e.target.closest(".ab-minus")) {
-      var q = parseInt(qEl.textContent, 10) || 1;
-      q += e.target.closest(".ab-plus") ? 1 : -1;
-      if (q < 1) q = 1;
-      if (q > 99) q = 99;
-      qEl.textContent = fmt(q);
-      qEl.dataset.v = q;
-      return;
-    }
-
-    var addBtn = e.target.closest(".ab-add");
-    if (!addBtn || addBtn.disabled) return;
-    if (!user) { needAuth("برای خرید وارد حسابت شو 🌀"); return; }
-
-    var pid = rail.getAttribute("data-pid");
-    var qty = parseInt(qEl.dataset.v || "1", 10) || 1;
-    addBtn.disabled = true;
-    var orig = addBtn.textContent;
-    API.post("/cart/items", { productId: pid, quantity: qty })
-      .then(function (d) {
-        updateBadge(d.data.count);
-        addBtn.textContent = "✓ اضافه شد";
-        addBtn.classList.add("added");
-        if (window.showToast) window.showToast("به سبد اضافه شد 🛒");
-        setTimeout(function () {
-          addBtn.textContent = orig;
-          addBtn.classList.remove("added");
-          addBtn.disabled = false;
-        }, 1400);
-      })
-      .catch(function (err) {
-        addBtn.disabled = false;
-        if (window.showToast) window.showToast(API.msg(err, "افزودن به سبد ناموفق بود"), true);
-      });
-  });
-
-  // ---------- لود داده ----------
   Promise.all([
     API.get("/albums"),
     API.get("/products?limit=60").catch(function () { return { data: { items: [] } }; }),
@@ -135,9 +45,8 @@
     .then(function (res) {
       var items = (res[0].data.items) || [];
       var products = (res[1].data && res[1].data.items) || [];
-
       items.forEach(function (a) {
-        var p = matchProduct(a, products);
+        var p = K.matchProduct(a, products);
         if (p) productsByAlbum[a.id] = p;
       });
 

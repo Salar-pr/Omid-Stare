@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="images/logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Vazirmatn:wght@400;500;700;900&display=swap" />
+    <link rel="stylesheet" href="css/main.css" />
+    <title>جزئیات آلبوم — OMID RASTAR</title>
+  </head>
+  <body>
+    <section class="background">
+      <img class="back" src="images/psych-bg.jpg" alt="" />
+      <p></p>
+    </section>
+
+    <nav class="navbar">
+      <a class="logo" href="index.html"><img class="logo-img" src="images/logo.png" alt="" />OMID <span>RASTAR</span></a>
+      <ul class="nav-links">
+        <li><a href="index.html">خانه</a></li>
+        <li><a class="active" href="albums.html">آلبوم‌ها</a></li>
+        <li><a href="shop.html">فروشگاه</a></li>
+        <li><a href="contact.html">تماس</a></li>
+        <li><a id="navAccount" href="account.html">ورود/ثبت‌نام</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" type="button" aria-label="منو"><span></span><span></span><span></span></button>
+    </nav>
+
+    <main class="content">
+      <div class="breadcrumb rv" style="padding: 120px 4vw 14px;">
+        <a href="index.html">خانه</a><span>/</span><a href="albums.html">آلبوم‌ها</a><span>/</span><b id="bcName">آلبوم</b>
+      </div>
+
+      <div class="album-detail-wrap rv" id="adRoot">
+        <p style="padding:40px; text-align:center; color:#a9a39a;">در حال لود آلبوم... 🌀</p>
+      </div>
+
+      <footer class="footer">
+        <div class="socials"><a href="#">INSTAGRAM</a><a href="#">YOUTUBE</a><a href="#">SPOTIFY</a><a href="#">SOUNDCLOUD</a></div>
+        © ۱۴۰۴ OMID RASTAR ★ ALBUM DETAIL
+      </footer>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script src="js/toast.js"></script>
+    <script src="js/nav.js"></script>
+    <script src="js/fx.js"></script>
+    <script src="js/album-shared.js"></script>
+    <script src="js/album.js"></script>
+  </body>
+</html>
