@@ -16,241 +16,135 @@
 > ◍ TAME IMPALA × PINK FLOYD × TOOL → EASTERN RIFF ◍
 >
 > **به ووید خوش اومدی.** 🖤 — همه‌چیز در یک ریپو: از پورتال سایکدلیک تا ثبت سفارش.
+# 🌀 OMID RASTAR
 
-</div>
+### وبسایت سایکدلیک-پراگرسیو: فروشگاه مرچ + کاتالوگ آلبوم + پنل مدیریت
 
----
-
-## 🚀 اجرا روی سیستم خودت (لوکال) — قدم‌به‌قدم
-
-**پیش‌نیاز فقط:** [Node.js 20 یا بالاتر](https://nodejs.org) (فقط برای راهِ «دیتابیس جاسازیشده» همین کافی است — نیازی به نصب PostgreSQL یا Docker نیست).
-
-> ⚠️ دو نکته که قبلاً توی README اشتباه بود و باعث «نمی‌تونم به دیتابیس وصل شم» می‌شد:
-> 1. فایل تنظیمات **`server/.env`** است (نه `.env` در ریشه) — مثالش توی `server/.env.example` است.
-> 2. برنامه با یوزر `omid` / رمز `omid` به دیتابیس `omid_stare` وصل می‌شود؛ این یوزر و دیتابیس باید **ساخته شده باشند** (نصب PostgreSQL به تنهایی کافی نیست).
-
-### ✅ راهِ ۱ — دیتابیس جاسازیشده (ساده‌ترین؛ مخصوصاً برای ویندوز) 🐘
-
-بدون نصب سرویس و بدون Docker؛ یک PostgreSQL واقعی با یک پوشه‌ی داده (`server/.pgdata`) بالا می‌آید — مثل «فایل دیتابیس» جنگو؛ پاک کردن آن پوشه = ریست کامل.
-
-```bash
-# ۱) برو توی پوشه‌ی سرور و پکیج‌ها را نصب کن
-cd server
-npm install
-
-# ۲) فایل تنظیمات را بساز (یک‌بار)
-#      ویندوز (cmd / PowerShell):    copy .env.example .env
-#      مک / لینوکس:                  cp .env.example .env
-#    (ادمین seed شده با ADMIN_EMAIL و ADMIN_PASSWORD همین فایل ساخته می‌شود)
-
-# ۳) ترمینالِ ۱ — دیتابیس را روشن کن (اولین اجرا ~۶۰MB باینری دانلود می‌کند؛
-#    خودش migrate و seed را هم اجرا می‌کند و تا وقتی باز است دیتابیس بالاست)
-npm run db:embedded
-
-# ۴) ترمینالِ ۲ — سرور سایت + API را روشن کن
-npm run dev
-```
-
-بعد مرورگر: **http://localhost:3000** · داک API: **http://localhost:3000/api/docs** · پنل ادمین: **http://localhost:3000/admin.html**
-
-> اگر پورت 5432 اشغال بود: یک بار `EMBEDDED_PG_PORT=5433` را در `server/.env` بگذار و `DATABASE_URL` را هم `postgres://omid:omid@localhost:5433/omid_stare` کن، بعد دوباره `npm run db:embedded`.
-
-### 🐳 راهِ ۲ — Docker (اگر Docker Desktop داری)
-
-```bash
-docker compose up -d          # PostgreSQL 16 با یوزر omid/omid و دیتابیس omid_stare
-cd server
-npm install
-copy .env.example .env        # ویندوز — یا cp .env.example .env
-npm run migrate
-npm run seed
-npm run dev
-```
-
-### 🗄️ راهِ ۳ — نصب معمولی PostgreSQL روی خود سیستم
-
-**ویندوز:** نصب‌کننده‌ی رسمی [EDB](https://www.postgresql.org/download/windows/) را نصب کن (در حین نصب یک رمز برای یوزر `postgres` بگذار و گزینه‌ی *pgAdmin* را نگه دار). بعد در pgAdmin یا SQL Shell (psql) این را اجرا کن:
-
-```sql
-CREATE ROLE omid LOGIN PASSWORD 'omid' SUPERUSER;
-CREATE DATABASE omid_stare OWNER omid;
-CREATE DATABASE omid_stare_test OWNER omid;   -- برای npm test
-```
-
-**مک (Homebrew):**
-```bash
-brew install postgresql@16
-brew services start postgresql@16
-psql postgres -c "CREATE ROLE omid LOGIN PASSWORD 'omid' SUPERUSER"
-createdb -O omid omid_stare && createdb -O omid omid_stare_test
-```
-
-**لینوکس (Debian/Ubuntu):**
-```bash
-sudo apt install postgresql
-sudo systemctl start postgresql
-sudo -u postgres psql -c "CREATE ROLE omid LOGIN PASSWORD 'omid' SUPERUSER"
-sudo -u postgres createdb -O omid omid_stare && sudo -u postgres createdb -O omid omid_stare_test
-```
-
-بعد مثل راهِ ۲: `cd server && npm install`، `copy .env.example .env`، `npm run migrate && npm run seed && npm run dev`.
+یه وبسایت کامل و فارسی (راستبهچپ) برای پروژه‌ی موسیقی OMID RASTAR. اینجا می‌تونی آلبوم‌ها رو ببینی، از فروشگاه (تیشرت، هودی، وینیل و...) خرید کنی، با کد تخفیف سفارش بدی، حساب کاربری بسازی و — اگه مدیر باشی — کل سایت رو از یه پنل مدیریت راحت مدیریت کنی. 🎸🌀
 
 ---
 
-## 🎭 یوزر و رمزهای پیش‌فرض (برای تست لوکال)
+## ✨ چیزایی که توش هست
 
-این مقادیر از `server/.env.example` می‌آیند — اگر همان را کپی کرده باشی، `npm run seed` این حساب‌ها را می‌سازد:
-
-| نقش | ایمیل | رمز | توضیح |
-|---|---|---|---|
-| 👑 **ادمین** | `admin@omid-stare.local` | `ChangeMe_Strong_1405` | به پنل ادمین (`admin.html`) دسترسی دارد |
-| 🙋 یوزر نمونه | `sina@demo.void.ir` | `Omid1404!` | برای خرید/سبد/سفارش تستی |
-| 🙋 یوزر نمونه | `arash@demo.void.ir` | `Omid1404!` | — |
-| 🙋 یوزر نمونه | `niloofar@demo.void.ir` | `Omid1404!` | — |
-| 🙋 یوزر نمونه | `kian@demo.void.ir` | `Omid1404!` | — |
-
-> هر زمان خواستی ایمیل/رمز ادمین را عوض کنی: مقادیر `ADMIN_EMAIL` / `ADMIN_PASSWORD` در `server/.env` را تغییر بده و `npm run seed` (یا `npm run create-admin`) را دوباره اجرا کن. رمز باید حداقل ۸ کاراکتر و شامل حرف و عدد باشد.
+- 🛍️ **فروشگاه اینترنتی**: سبد خرید، کد تخفیف و کمپین‌های فروش، ثبت سفارش و پیگیری وضعیت
+- 💿 **کاتالوگ آلبوم‌ها**: آلبوم‌ها با لیست ترک‌ها و پلیر صوتی
+- 👤 **حساب کاربری**: ثبت‌نام / ورود / پروفایل با عکس آواتار
+- ⚙️ **پنل مدیریت کامل**: داشبورد آماری، مدیریت محصولات و آلبوم‌ها، سفارش‌ها، کدهای تخفیف، پیام‌های تماس، تایید نظرات مشتری‌ها و...
+- 🎨 ظاهر سایکدلیک/نئون با فونت فارسی «وزیرمتن»
 
 ---
 
-## 🛠️ پنل ادمین (چطور واردش شوم؟)
+## 🛠️ با چه تکنولوژی‌هایی ساخته شده؟
 
-پنل ادمین یک صفحه‌ی گرافیکی دارد: **`/admin.html`**
-
-1. اول باید با **حساب ادمین** وارد شوی: صفحه‌ی «ورود/ثبت‌نام» (`account.html`) → ایمیل و رمز ادمین بالا را بزن.
-2. بعد از ورود، صفحه‌ی پروفایل باز می‌شود و بالای داشبورد یک کارت **«پنل ادمین ⚙️»** می‌بینی → کلیک کن.
-   (یا مستقیم برو به `http://localhost:3000/admin.html` و همان‌جا لاگین کن.)
-3. داخل پنل: داشبورد آماری · مدیریت سفارش‌ها (تغییر وضعیت/پرداخت) · محصولات (ساخت/ویرایش/موجودی/فعال‌سازی) · آلبوم‌ها · کمپین‌های کد تخفیف و **تولید کد** · پیام‌های تماس · تایید نظرات و پاسخ به Q&A · کاربران · آپلود مدیا · نوتیفیکیشن‌ها.
-
-**اگر فقط API می‌خواهی:** همه‌ی مسیرهای مدیریتی زیر `prefix` ادمین با همان کوکی ورود در دسترس‌اند (`GET/POST/PATCH/DELETE /api/admin/...`). لیست کامل را در صفحه‌ی مستندات **`/api/docs`** ببین. مثال:
-
-```bash
-# ورود و گرفتن session cookie
-curl -c cookies.txt -X POST http://localhost:3000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"admin@omid-stare.local","password":"ChangeMe_Strong_1405"}'
-
-# آمار داشبورد
-curl -b cookies.txt http://localhost:3000/api/admin/dashboard
-```
-
----
-
-## ✨ تو جعبه چه‌هاست
-
-**🎨 فرانت‌اند — فارسی، RTL، بدون هیچ framework** (صفحات: پورتال ورود، خانه، کاتالوگ آلبوم‌ها، فروشگاه، محصول، سبد، سفارش‌ها، ویش‌لیست، تماس، ورود/ثبت‌نام، پروفایل، ویرایش پروفایل + **پنل ادمین**)
-
-**💿 آلبوم‌ها** — ۴ آلبوم با لیست ترک‌ها + پلیر؛ «welcome track» خودکار پخش می‌شود.
-
-**🛒 فروشگاه** — سبد، هزینه‌ی ارسال، **کوپن و کمپین تخفیف**، جریان وضعیت سفارش با history.
-
-**👤 کاربر** — ثبت‌نام/لاگین با session کوکیِ امضاشده، TTL قابل‌تنظیم، ویس‌لیست، پروفایل و آواتار.
-
-**🛠️ پنل ادمین** — داشبورد · CRUD محصول · مدیریت آلبوم و ترک · سفارش‌ها (تغییر وضعیت) · کمپین‌های کوپن (generate انبوه کد) · پیام‌های تماس · نوتیفیکیشن داخل سایت · آپلود مدیا · لیست یوزرها · مودریشن نظر و Q&A.
-
-**📡 نوتیفیکیشن** — سرویس کانال‌محور؛ رویدادهایی مثل `order_created` به کانال‌های `log` و `admin` می‌روند.
-
-## 🧱 استک
-
-| لایه | تکنولوژی |
-|---|---|
-| فرانت | Vanilla HTML/CSS/JS (بدون build) · فونت Vazirmatn + Space Grotesk · هویت Psychedelic/Dark/Neon |
-| API | **Fastify 5** · اعتبارسنجی با **zod** |
-| دیتابیس | **PostgreSQL** · **Drizzle ORM** · pool با `pg` |
-| Auth | **argon2id** · کوکی session امضاشده (`sid`) |
-| امنیت | helmet · gzip · rate-limit · redact لاگ · denylist استاتیک |
-| تست | **`node:test`** داخلی — ۳۴ تست E2E (`npm test`) |
-
-## 🏗️ معماری
-
-```
-server/src/
-├── modules/
-│   ├── auth/       # register / login / logout / me + session
-│   ├── albums/     # کاتالوگ آلبوم‌ها + ترک‌ها
-│   ├── products/   # محصولات + reviewها + Q&A
-│   ├── cart/       # سبد + quote / summary
-│   ├── coupons/    # کمپین‌ها + کدها
-│   ├── orders/     # ثبت سفارش + وضعیت
-│   ├── wishlist/
-│   ├── users/      # پروفایل، آواتار، تغییر رمز
-│   ├── contact/    # پیام‌های عمومی
-│   ├── content/    # محتوای قابل‌ویرایش سایت
-│   ├── admin/      # داشبورد، سفارش‌ها، مدیا، moderation
-│   └── docs/       # داک API (docs.html + openapi.json)
-├── db/                      # client + schema (Drizzle) + migrate
-├── config/                  # env یک‌بار خوانده و validate می‌شود
-└── app.js / server.js
-```
-
-## 🔌 API — چند نمونه
-
-| Endpoint | توضیح |
-|---|---|
-| `POST /api/auth/register` · `POST /api/auth/login` | ثبت‌نام / ورود (rate-limit سخت) |
-| `GET /api/auth/me` | یوزر فعلی |
-| `GET /api/albums` · `GET /api/products` | کاتالوگ |
-| `GET /api/cart` · `POST /api/cart/items` · `GET /api/cart/quote` | سبد |
-| `POST /api/orders` · `GET /api/orders` | ثبت سفارش + تاریخچه |
-| `GET /api/admin/dashboard` · `PATCH /api/admin/orders/:id/status` *(ادمین)* | مدیریت |
-| `POST /api/coupons/campaigns` *(ادمین)* | کمپین + generate کد |
-| `GET /api/health` | health + وضعیت DB |
-
-## 🧪 تست
-
-```bash
-# دیتابیس omid_stare_test باید ساخته شده باشد (راه‌های بالا)
-cd server
-npm test          # ۳۴ تست E2E با node:test — بدون وابستگی اضافه
-```
-
-## ⚙️ متغیرهای محیطی
-
-فایل کامل و کامنت‌خورده: **`server/.env.example`** (بعد از کپی به `server/.env`).
-
-| متغیر | پیش‌فرض | توضیح |
+| قسمت | تکنولوژی | یعنی چی؟ |
 |---|---|---|
-| `PORT` / `HOST` | `3000` / `0.0.0.0` | |
-| `DATABASE_URL` | `postgres://omid:omid@localhost:5432/omid_stare` | |
-| `SESSION_TTL_DAYS` | `7` | عمر session |
-| `COOKIE_SECRET` | — | امضای کوکی (در production حتماً) |
-| `ADMIN_EMAIL` / `ADMIN_PASSWORD` | — | ادمینِ ساخته‌شده توسط seed / create-admin |
-| `NOTIFICATION_CHANNELS` | `log,admin` | |
-| `SHIPPING_AMOUNT` | `0` | هزینه‌ی ارسال |
-| `DATABASE_URL_TEST` | `…/omid_stare_test` | دیتابیس تست |
+| ظاهر سایت (فرانت) | HTML + CSS + JavaScript خالص | بدون فریم‌ورک سنگین؛ سریع و سبک |
+| سرور (بک‌اند) | **Node.js** + **Fastify** | موتور اجرا + وب‌سرور |
+| دیتابیس | **PostgreSQL** | جایی که کاربرها، سفارش‌ها و محصولات ذخیره می‌شن |
+| رمز و امنیت | Argon2 + کوکی امن | رمزها هش می‌شن و ورود با session امن انجام می‌شه |
+| تست | node:test | ۳۴ تست خودکار که همیشه چک می‌کنه همه‌چیز درست کار کنه |
 
-## 📁 ساختار ریپو
+---
+
+## 🚀 راه‌اندازی روی سیستم خودت (قدم‌به‌قدم)
+
+### پیش‌نیاز (فقط یک چیز!)
+[Node.js](https://nodejs.org) نسخه‌ی ۲۰ یا بالاتر رو نصب کن. بقیه‌ش خودکاره — **نیازی به نصب دیتابیس یا Docker نیست.**
+
+### قدم ۱ — کد پروژه رو بگیر
+از صفحه‌ی گیت‌هاب، دکمه‌ی سبز **Code ← Download ZIP** رو بزن و فایل رو از حالت فشرده خارج کن.
+
+### قدم ۲ — ترمینال رو باز کن
+داخل پوشه‌ی پروژه برو، بعد وارد پوشه‌ی `server` بشو. اون‌جا **کلیک راست ← Open in Terminal** (یا Git Bash) بزن.
+
+### قدم ۳ — پکیج‌ها رو نصب کن
+توی ترمینال بنویس و Enter بزن (کمی طول می‌کشه، صبر کن):
+
+```bash
+npm install
+```
+
+### قدم ۴ — فایل تنظیمات رو بساز
+- **ویندوز:**
+  ```bash
+  copy .env.example .env
+  ```
+- **مک / لینوکس:**
+  ```bash
+  cp .env.example .env
+  ```
+
+### قدم ۵ — دیتابیس رو روشن کن 🐘
+**یه ترمینال جدید** باز کن (داخل پوشه‌ی `server`) و این رو بزن:
+```bash
+npm run db:embedded
+```
+اولین بار چند لحظه طول می‌کشه (یه PostgreSQL کوچیک دانلود می‌شه) و بعد خودش دیتابیس، جدول‌ها و داده‌های نمونه رو آماده می‌کنه. **این ترمینال باید باز بمونه.**
+
+### قدم ۶ — سایت رو اجرا کن
+**یه ترمینال دیگه** (بازم داخل پوشه‌ی `server`) باز کن و بزن:
+```bash
+npm run dev
+```
+
+### قدم ۷ — باز کن و لذت ببر! 🎉
+توی مرورگر برو به: **http://localhost:3000**
+
+---
+
+## 👤 یوزر و رمزهای آماده (برای تست)
+
+| نقش | ایمیل | رمز |
+|---|---|---|
+| 👑 **مدیر سایت** | `admin@omid-stare.local` | `ChangeMe_Strong_1405` |
+| 🙋 مشتری نمونه | `sina@demo.void.ir` | `Omid1404!` |
+| 🙋 مشتری نمونه | `arash@demo.void.ir` | `Omid1404!` |
+| 🙋 مشتری نمونه | `niloofar@demo.void.ir` | `Omid1404!` |
+
+> این مقادیر پیش‌فرض توی فایل `server/.env` هستن — هر وقت خواستی ایمیل یا رمز ادمین رو عوض کنی، همون‌جا تغییر بده و دوباره `npm run seed` بزن.
+
+---
+
+## ⚙️ پنل مدیریت کجاست؟
+
+1. اول برو به **http://localhost:3000/account.html** و با ایمیل/رمز **ادمین** بالا وارد شو.
+2. بعد از ورود، توی صفحه‌ی پروفایل کارت **«پنل ادمین ⚙️»** رو می‌بینی — روش کلیک کن.
+3. یا مستقیم برو به **http://localhost:3000/admin.html** (اون‌جا هم فرم ورود داره).
+
+داخل پنل می‌تونی: آمار فروش ببینی، سفارش‌ها رو تغییر وضعیت بدی (تایید → ارسال → تحویل)، محصول و آلبوم بسازی، کد تخفیف تولید کنی، پیام‌های فرم تماس رو بخونی و نظرات مشتری‌ها رو تایید کنی.
+
+---
+
+## ❓ چیزی کار نکرد؟
+
+| مشکل | راه‌حل |
+|---|---|
+| پیغام خطای اتصال به دیتابیس | ترمینال دیتابیس (`npm run db:embedded`) بازه؟ پورت ۵۴۳۲ رو برنامه‌ی دیگه‌ای نگرفته؟ اگه آره، توی `server/.env` مقدار `EMBEDDED_PG_PORT=5433` و `DATABASE_URL=postgres://omid:omid@localhost:5433/omid_stare` بذار و دوباره اجرا کن. |
+| «ادمین ساخته نشد» موقع seed | یعنی فایل `server/.env` رو نساختی — برو قدم ۴ و بعد دوباره `npm run db:embedded`. |
+| پورت ۳۰۰۰ اشغاله | توی `server/.env` بنویس `PORT=3001` و بعد `http://localhost:3001` رو باز کن. |
+| رمز ادمین رو فراموش کردم | توی فایل `server/.env` یه رمز جدید بذار و `npm run seed` بزن. |
+
+---
+
+## 🗂️ پروژه از چی تشکیل شده؟ (خلاصه)
 
 ```
 Omid-Stare/
-├── index.html … admin.html    # صفحات فرانت‌اند (فارسی/RTL)
-├── css/  js/  images/         # استایل، اسکریپت، مدیا
-├── server/
-│   ├── src/                   # مونولیت Fastify (modules + services + db)
-│   ├── scripts/               # migrate · seed · create-admin · db-embedded
-│   ├── migrations/            # 0001 core → 0002 coupons/contact → 0003 reviews/qa
-│   └── test/                  # node:test — ۳۴ تست
-├── server/.env.example        # ← تنظیمات نمونه (کپی به server/.env)
-├── docker-compose.yml         # فقط PostgreSQL — برای راهِ Docker
-├── AUDIT.md / REVIEW.md
-└── README.md
+├── index.html و بقیه صفحات...   ← ظاهر سایت
+├── admin.html                    ← پنل مدیریت
+├── css / js / images             ← استایل، اسکریپت‌ها و تصاویر
+├── server/                       ← مغزِ پروژه (سرور + دیتابیس)
+│   ├── scripts/                  ← ابزارها (اجرای دیتابیس، seed، ...)
+│   ├── migrations/               ← ساختن جدول‌های دیتابیس
+│   └── src/                      ← کد سرور
+└── README.md                     ← همین راهنما
 ```
-
-## 🚀 production
-
-```bash
-NODE_ENV=production npm start
-```
-
-- در production خودکار: `SameSite=strict`، secure cookie، امضای کوکی از `COOKIE_SECRET`
-- `trustProxy` فعال (پشت nginx/ALB راحت) · Cache-Control ترازبندی‌شده · آپلودها UUID → immutable
-- `checkConnection` هنگام بوت: اگر DB down باشد سرور نمی‌افتد — `/api/health` وضعیت را نشان می‌دهد
 
 ---
 
 <div align="center">
 
-**OMID RASTAR ★ PSYCHEDELIC PROGRESSIVE — تهران ۱۴۰۴**
+**OMID RASTAR ★ PSYCHEDELIC PROGRESSIVE**
 
 _«پراگرسیو سایکدلیک: جایی که زمان آب می‌شه و گیتار حرف می‌زنه.»_ 🌊
 
