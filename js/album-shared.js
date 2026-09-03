@@ -4,20 +4,42 @@
     return String(s || "").toLowerCase().replace(/[\u200c\s\-—_.]/g, "");
   }
 
-  // محصول مرتبط با آلبوم را از روی نام پیدا می‌کند (وینیل/CD همان آلبوم)
+  // فقط «حامل موسیقی» (وینیل / CD / کاست / نسخه دیجیتال) می‌تواند نسخه‌ی فروشیِ یک آلبوم باشد.
+  // تیشرت/هودی/اکسسوری هم‌نام هرگز به آلبوم وصل نمی‌شود.
+  var MEDIA_RE = /وینیل|صفحه|کاست|سی\s*دی|دیجیتال|آلبوم|vinyl|\bcd\b|cassette|tape|lp|digital|album/i;
+  var MERCH_RE = /تیشرت|تی\s*شرت|هودی|سوییشرت|کلاه|پوستر|ماگ|پیک|استیکر|پوشاک|اکسسوری|tshirt|t-shirt|hoodie|poster|mug|pick|sticker|cap/i;
+
+  function isMusicMedia(p) {
+    var hay = (p.category || "") + " " + (p.name || "") + " " + (p.nameEn || "") + " " + (p.slug || "");
+    if (MERCH_RE.test(hay)) return false;
+    return MEDIA_RE.test(hay);
+  }
+
+  // محصول مرتبط با آلبوم را از روی نام پیدا می‌کند — فقط بین حاملان موسیقی
   function matchProduct(album, products) {
     var t = norm(album.title), tf = norm(album.titleFa);
+    if (!t && !tf) return null;
     var best = null;
     (products || []).forEach(function (p) {
+      if (!isMusicMedia(p)) return;
       var hay = norm(p.name) + "|" + norm(p.nameEn) + "|" + norm(p.slug);
-      var hit = (t && hay.indexOf(t) > -1) || (tf && hay.indexOf(tf) > -1);
+      var hit = (t && t.length > 2 && hay.indexOf(t) > -1) || (tf && tf.length > 2 && hay.indexOf(tf) > -1);
       if (!hit) return;
-      if (!best) { best = p; return; }
-      var isVinyl = /وینیل|vinyl|cd|آلبوم/i.test(p.category + " " + p.name);
-      var bestVinyl = /وینیل|vinyl|cd|آلبوم/i.test(best.category + " " + best.name);
-      if (isVinyl && !bestVinyl) best = p;
+      if (!best) best = p;
     });
     return best;
+  }
+
+  // مرچ/محصولات مرتبط با آلبوم (تیشرت، هودی، پوستر...) — به‌جز خود نسخه‌ی فیزیکی
+  function relatedMerch(album, products, exclude) {
+    var t = norm(album.title), tf = norm(album.titleFa);
+    var exId = exclude && exclude.id;
+    return (products || []).filter(function (p) {
+      if (p.id === exId) return false;
+      if (isMusicMedia(p)) return false;
+      var hay = norm(p.name) + "|" + norm(p.nameEn) + "|" + norm(p.slug);
+      return (t && t.length > 2 && hay.indexOf(t) > -1) || (tf && tf.length > 2 && hay.indexOf(tf) > -1);
+    });
   }
 
   function durLabel(sec) {
@@ -61,7 +83,7 @@
       '<div class="bb-qty"><button type="button" class="bb-minus" aria-label="کم">−</button><span class="bb-q" data-v="1">1</span><button type="button" class="bb-plus" aria-label="زیاد">+</button></div>' +
       '<button class="btn btn-primary bb-add" type="button"' + (out ? " disabled" : "") + ">" +
       (out ? "ناموجود" : "افزودن به سبد 🛒") + "</button>" +
-      '<a class="bb-link" href="product.html?slug=' + encodeURIComponent(product.slug) + '">جزئیات محصول ←</a>' +
+      '<a class="bb-link" href="product.html?slug=' + encodeURIComponent(product.slug) + '">جزئیات نسخه فیزیکی ←</a>' +
       "</div>";
   }
 
@@ -116,6 +138,8 @@
 
   window.AlbumKit = {
     matchProduct: matchProduct,
+    relatedMerch: relatedMerch,
+    isMusicMedia: isMusicMedia,
     durLabel: durLabel,
     totalDuration: totalDuration,
     buyBarHtml: buyBarHtml,

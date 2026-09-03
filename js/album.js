@@ -8,6 +8,7 @@
   var user = null;
   var album = null;
   var product = null;
+  var merch = [];
   var others = [];
 
   function render() {
@@ -26,6 +27,15 @@
             "</div>";
         }).join("")
       : '<p style="color:#a9a39a; padding:14px;">ترکی برای این آلبوم ثبت نشده 🌀</p>';
+
+    var merchHtml = merch.length
+      ? '<section class="ad-block"><h2>محصولات مرتبط با این آلبوم</h2><div class="ad-others">' +
+        merch.map(function (m) {
+          return '<a class="ad-other" href="product.html?slug=' + encodeURIComponent(m.slug) + '">' +
+            '<img loading="lazy" src="' + m.image + '" alt="' + escHtml(m.name) + '">' +
+            "<b>" + escHtml(m.name) + "</b><small>" + fmt(m.price) + " تومان</small></a>";
+        }).join("") + "</div></section>"
+      : "";
 
     var othersHtml = others.length
       ? '<section class="ad-block"><h2>آلبوم‌های دیگه</h2><div class="ad-others">' +
@@ -48,6 +58,7 @@
       "</div></div>" +
       K.buyBarHtml(product) +
       '<section class="ad-block"><h2>لیست ترک‌ها</h2><div class="ad-tracks">' + tracksHtml + "</div></section>" +
+      merchHtml +
       othersHtml +
       '<div class="ad-back"><a class="btn btn-ghost" href="albums.html">← برگشت به آلبوم‌ها</a></div>';
   }
@@ -70,6 +81,7 @@
       album = res[0].data;
       var products = (res[1].data && res[1].data.items) || [];
       product = K.matchProduct(album, products);
+      merch = K.relatedMerch(album, products, product);
       others = ((res[2].data && res[2].data.items) || []).filter(function (o) { return o.id !== album.id; }).slice(0, 4);
       render();
       API.me().then(function (u) { user = u; }, function () {});
