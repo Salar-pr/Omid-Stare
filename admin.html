@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="images/logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Vazirmatn:wght@400;500;700;900&display=swap" />
+    <link rel="stylesheet" href="css/admin.css" />
+    <title>پنل ادمین | OMID RASTAR</title>
+  </head>
+  <body>
+    <div class="admin-bg">
+      <img src="images/psych-portal.jpg" alt="" />
+      <div class="veil"></div>
+    </div>
+
+    <div class="wrap">
+      <header class="topbar">
+        <a class="logo" href="index.html"><img src="images/logo.png" alt="" />OMID <b>RASTAR</b></a>
+        <div class="who">
+          <span id="whoName">—</span>
+          <span class="role">ADMIN</span>
+          <a class="link-site" href="index.html" target="_blank" rel="noopener">مشاهده‌ی سایت 🌀</a>
+          <button class="ghost" id="logoutBtn" type="button">خروج</button>
+        </div>
+      </header>
+
+      <!-- گیت ورود (وقتی لاگین نیستی / ادمین نیستی) -->
+      <section id="gate" class="gate">
+        <h1>پنل <span>ادمین</span></h1>
+        <p class="sub">برای مدیریت باید با حسابِ ادمین وارد بشی.</p>
+        <div id="gateMsg"></div>
+        <div id="gateLogin">
+          <form id="gateForm" novalidate>
+            <label for="gateEmail">ایمیل ادمین</label>
+            <input id="gateEmail" type="text" placeholder="admin@omid-stare.local" dir="ltr" style="text-align:left" />
+            <label for="gatePass">رمز عبور</label>
+            <input id="gatePass" type="password" placeholder="••••••••" dir="ltr" style="text-align:left" />
+            <div class="err" id="gateErr"></div>
+            <button class="btn-primary" type="submit">ورود به پنل مدیریت</button>
+          </form>
+          <p class="hint">حساب ادمین بعد از <code>npm run seed</code> از روی <code>ADMIN_EMAIL / ADMIN_PASSWORD</code> در <code>server/.env</code> ساخته می‌شود.</p>
+        </div>
+        <div id="gateDenied" class="hidden">
+          <p style="color:var(--red);margin:10px 0">این حساب مدیر نیست. 🔒</p>
+          <a class="btn-primary" style="display:block;text-align:center;background:linear-gradient(90deg,#3a7bd5,#00d2ff);text-decoration:none" href="account.html">رفتن به صفحه‌ی ورود</a>
+        </div>
+      </section>
+
+      <!-- پنل اصلی -->
+      <div id="panel" class="panel hidden">
+        <aside class="side" id="side">
+          <button type="button" data-sec="dash" class="on"><span class="ic">📊</span>داشبورد</button>
+          <button type="button" data-sec="orders"><span class="ic">🧾</span>سفارش‌ها</button>
+          <button type="button" data-sec="products"><span class="ic">👕</span>محصولات</button>
+          <button type="button" data-sec="albums"><span class="ic">💿</span>آلبوم‌ها</button>
+          <button type="button" data-sec="coupons"><span class="ic">🎟️</span>کد تخفیف</button>
+          <button type="button" data-sec="messages"><span class="ic">✉️</span>پیام‌های تماس</button>
+          <button type="button" data-sec="reviews"><span class="ic">⭐</span>نظرات و Q&A</button>
+          <button type="button" data-sec="users"><span class="ic">👤</span>کاربران</button>
+          <button type="button" data-sec="media"><span class="ic">🖼️</span>آپلود مدیا</button>
+          <button type="button" data-sec="notifs"><span class="ic">🔔</span>نوتیفیکیشن‌ها</button>
+        </aside>
+
+        <main class="content">
+          <!-- داشبورد -->
+          <section id="sec-dash" class="box">
+            <div class="box-head">
+              <h2>داشبورد <span>🌀</span></h2>
+              <div class="spacer"></div>
+              <button class="small" type="button" data-reload="dash">بازخوانی</button>
+            </div>
+            <div id="dash-stats" class="stats"><div class="empty">در حال بارگذاری…</div></div>
+            <h3 class="desc" style="margin-top:14px">کمبود موجودی (۱ تا ۵)</h3>
+            <div class="tbl-wrap"><table class="tbl" id="dash-lowstock"></table></div>
+          </section>
+
+          <!-- سفارش‌ها -->
+          <section id="sec-orders" class="box hidden">
+            <div class="box-head">
+              <h2>سفارش‌ها <span>🧾</span></h2>
+              <div class="spacer"></div>
+              <button class="small" type="button" data-reload="orders">بازخوانی</button>
+            </div>
+            <div class="tbl-wrap"><table class="tbl" id="orders-tbl"></table></div>
+            <p class="desc" style="margin-top:10px">تغییر وضعیت فقط در مسیرهای منطقی ممکن است (مثلاً ارسال‌شده → تحویل‌شده)؛ بقیه را سرور رد می‌کند.</p>
+          </section>
+
+          <!-- محصولات -->
+          <section id="sec-products" class="box hidden">
+            <div class="box-head">
+              <h2>محصولات <span>👕</span></h2>
+              <div class="spacer"></div>
+              <button class="small" type="button" data-reload="products">بازخوانی</button>
+            </div>
+            <div class="tbl-wrap"><table class="tbl" id="products-tbl"></table></div>
+
+            <h3 class="desc" id="product-form-title" style="margin-top:20px">➕ محصول جدید</h3>
+            <form id="productForm" class="form-grid">
+              <input type="hidden" id="pf-id" />
+              <div class="field"><label>نام محصول *</label><input id="pf-name" required /></div>
+              <div class="field"><label>دسته</label><input id="pf-category" placeholder="پوشاک / وینیل / …" /></div>
+              <div class="field"><label>قیمت (تومان) *</label><input id="pf-price" type="number" min="0" required /></div>
+              <div class="field"><label>قیمت قبل از تخفیف</label><input id="pf-compare" type="number" min="0" /></div>
+              <div class="field"><label>موجودی *</label><input id="pf-stock" type="number" min="0" required /></div>
+              <div class="field"><label>slug (لاتین، اختیاری)</label><input id="pf-slug" dir="ltr" style="text-align:left" placeholder="auto" /></div>
+              <div class="field"><label>بج</label><input id="pf-badge" placeholder="NEW • PSYCH" /></div>
+              <div class="field full"><label>آدرس تصویر اصلی</label><input id="pf-image" dir="ltr" style="text-align:left" placeholder="images/merch-tshirt.jpg یا /media/media/…" /></div>
+              <div class="field full"><label>توضیحات</label><textarea id="pf-description"></textarea></div>
+              <div class="field full check"><input id="pf-active" type="checkbox" checked /><label for="pf-active" style="margin:0">فعال (قابل نمایش در فروشگاه)</label></div>
+              <div class="field full" style="display:flex;gap:8px;align-items:center">
+                <button class="btn-primary" style="width:auto;padding:8px 26px;margin:0" type="submit">ذخیره‌ی محصول</button>
+                <button class="small danger" type="button" id="pf-cancel" style="display:none">انصراف از ویرایش</button>
+              </div>
+            </form>
+          </section>
+
+          <!-- آلبوم‌ها -->
+          <section id="sec-albums" class="box hidden">
+            <div class="box-head">
+              <h2>آلبوم‌ها <span>💿</span></h2>
+              <div class="spacer"></div>
+              <button class="small" type="button" data-reload="albums">بازخوانی</button>
+            </div>
+            <div class="tbl-wrap"><table class="tbl" id="albums-tbl"></table></div>
+
+            <h3 class="desc" style="margin-top:20px">➕ آلبوم جدید</h3>
+            <form id="albumForm" class="form-grid">
+              <div class="field"><label>عنوان (EN) *</label><input id="af-title" required /></div>
+              <div class="field"><label>عنوان فارسی</label><input id="af-titlefa" /></div>
+              <div class="field"><label>سال *</label><input id="af-year" type="number" min="1300" max="1500" value="1404" required /></div>
+              <div class="field"><label>ژانر</label><input id="af-genre" placeholder="PROG PSYCH" /></div>
+              <div class="field"><label>ترتیب</label><input id="af-sort" type="number" value="10" /></div>
+              <div class="field full"><label>آدرس کاور</label><input id="af-cover" dir="ltr" style="text-align:left" placeholder="images/… یا /media/media/…" /></div>
+              <div class="field full"><label>توضیحات</label><textarea id="af-desc"></textarea></div>
+              <div class="field full" style="display:flex;align-items:center;gap:10px">
+                <button class="btn-primary" style="width:auto;padding:8px 26px;margin:0" type="submit">ساخت آلبوم</button>
+              </div>
+            </form>
+            <p class="desc" style="margin-top:10px">افزودن/حذف ترک‌ها از طریق API ادمین (مستندات <span class="mono">/api/docs</span>) انجام می‌شود.</p>
+          </section>
+
+          <!-- کوپن‌ها -->
+          <section id="sec-coupons" class="box hidden">
+            <div class="box-head">
+              <h2>کمپین‌های کد تخفیف <span>🎟️</span></h2>
+              <div class="spacer"></div>
+              <button class="small" type="button" data-reload="coupons">بازخوانی</button>
+            </div>
+            <div class="tbl-wrap"><table class="tbl" id="coupons-tbl"></table></div>
+            <div id="coupon-codes" class="hidden"><div class="codes-title">✨ کدهای ساخته‌شده (فقط همین‌جا نمایش داده می‌شوند — کپی کن):</div><div class="codes" id="coupon-codes-text"></div></div>
+
+            <h3 class="desc" style="margin-top:20px">➕ کمپین جدید (تولید خودکار کد)</h3>
+            <form id="campaignForm" class="form-grid">
+              <div class="field"><label>نام کمپین *</label><input id="cf-name" required placeholder="مثلاً: بلک‌فرایدی ۳۰٪" /></div>
+              <div class="field"><label>نوع تخفیف</label>
+                <select id="cf-type"><option value="percentage">درصدی</option><option value="fixed">مبلغ ثابت (تومان)</option></select>
+              </div>
+              <div class="field"><label>مقدار تخفیف *</label><input id="cf-value" type="number" min="1" required /></div>
+              <div class="field"><label>انقضا *</label><input id="cf-exp" type="date" required /></div>
+              <div class="field"><label>تعداد کد *</label><input id="cf-count" type="number" min="1" max="500" value="10" required /></div>
+              <div class="field"><label>سقف استفاده کل</label><input id="cf-maxuses" type="number" min="1" placeholder="بدون سقف" /></div>
+              <div class="field full" style="display:flex;align-items:center;gap:10px">
+                <button class="btn-primary" style="width:auto;padding:8px 26px;margin:0" type="submit">ساخت کمپین و تولید کد</button>
+              </div>
+            </form>
+          </section>
+
+          <!-- پیام‌های تماس -->
+          <section id="sec-messages" class="box hidden">
+            <div class="box-head">
+              <h2>پیام‌های تماس <span>✉️</span></h2>
+              <div class="spacer"></div>
+              <button class="small" type="button" data-reload="messages">بازخوانی</button>
+            </div>
+            <div id="messages-list"></div>
+          </section>
+
+          <!-- نظرات و سوالات -->
+          <section id="sec-reviews" class="box hidden">
+            <div class="box-head">
+              <h2>نظرات محصولات <span>⭐</span></h2>
+              <div class="spacer"></div>
+              <button class="small" type="button" data-reload="reviews">بازخوانی</button>
+            </div>
+            <div id="reviews-list"></div>
+            <div class="box-head" style="margin-top:18px">
+              <h2>پرسش و پاسخ <span>💬</span></h2>
+            </div>
+            <div id="questions-list"></div>
+          </section>
+
+          <!-- کاربران -->
+          <section id="sec-users" class="box hidden">
+            <div class="box-head">
+              <h2>کاربران <span>👤</span></h2>
+              <div class="spacer"></div>
+              <button class="small" type="button" data-reload="users">بازخوانی</button>
+            </div>
+            <div class="tbl-wrap"><table class="tbl" id="users-tbl"></table></div>
+          </section>
+
+          <!-- آپلود -->
+          <section id="sec-media" class="box hidden">
+            <h2>آپلود مدیا <span>🖼️</span></h2>
+            <p class="desc">برای کاور آلبوم یا تصویر محصول آپلود کن؛ بعد آدرس داده‌شده را در فرم محصول/آلبوم کپی کن. (JPG/PNG/WebP تا ۵MB)</p>
+            <input type="file" id="media-file" accept="image/jpeg,image/png,image/webp" />
+            <div id="media-result" class="codes hidden">
+              <div class="codes-title">✅ آدرس فایل (کپی کن):</div>
+              <div id="media-url" style="direction:ltr"></div>
+              <img id="media-preview" alt="پیش‌نمایش" style="max-height:170px;margin-top:10px;border-radius:12px;border:1px solid var(--line)" />
+            </div>
+          </section>
+
+          <!-- نوتیفیکیشن‌ها -->
+          <section id="sec-notifs" class="box hidden">
+            <div class="box-head">
+              <h2>نوتیفیکیشن‌های سایت <span>🔔</span></h2>
+              <div class="spacer"></div>
+              <button class="small" type="button" data-reload="notifs">بازخوانی</button>
+            </div>
+            <div id="notifs-list"></div>
+          </section>
+        </main>
+      </div>
+
+      <footer class="foot">OMID RASTAR ★ PSYCH ADMIN — مدیریت از همین صفحه + مستندات API در /api/docs</footer>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/toast.js"></script>
+    <script src="js/admin.js"></script>
+  </body>
+</html>
