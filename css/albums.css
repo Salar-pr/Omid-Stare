@@ -339,14 +339,18 @@
   border-radius: 20px 20px 0 0; padding: 24px;
 }
 .ad-cover {
-  aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+  width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
   background:
     radial-gradient(90% 70% at 20% 20%, rgba(255,45,149,0.08), transparent 60%),
     radial-gradient(80% 60% at 80% 75%, rgba(122,44,255,0.10), transparent 62%),
     #0a0a0f;
   border-radius: 16px; overflow: hidden; padding: 16px;
 }
-.ad-cover .vinyl { animation: vinylSpin 16s linear infinite; }
+/* min-width:0 لازم است وگرنه آیتم فلکس با aspect-ratio از قاب بیرون می‌زند */
+.ad-cover .vinyl {
+  width: 88%; max-width: 88%; height: auto; min-width: 0; flex: 0 0 auto;
+  animation: vinylSpin 16s linear infinite;
+}
 .ad-meta h1 { font-size: 2rem; font-weight: 900; line-height: 1.3; }
 .ad-meta .ad-fa { color: #a9a39a; margin: 4px 0 12px; font-size: 0.95rem; }
 .ad-meta .album-meta { margin-bottom: 12px; }
@@ -378,23 +382,39 @@
 .ad-track audio { height: 32px; max-width: 220px; }
 .ad-track small { color: #a9a39a; font-size: 0.76rem; flex: none; }
 
-.ad-others { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+/* flex به‌جای auto-fit: با یک آیتم، کارت کشیده و غول‌پیکر نمی‌شود */
+.ad-others { display: flex; flex-wrap: wrap; gap: 12px; }
 .ad-other {
+  flex: 0 1 180px; max-width: 220px;
   display: block; text-decoration: none; color: inherit; padding: 10px;
   background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
   border-radius: 14px; transition: transform 0.25s ease, border-color 0.25s ease;
 }
 .ad-other:hover { transform: translateY(-4px); border-color: rgba(255,45,149,0.22); }
-.ad-other img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 10px; margin-bottom: 8px; }
-.ad-other b { display: block; font-size: 0.85rem; }
+.ad-other img {
+  width: 100%; height: auto; aspect-ratio: 1; object-fit: cover;
+  border-radius: 10px; margin-bottom: 8px;
+}
+.ad-other b {
+  display: block; font-size: 0.85rem; line-height: 1.5;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
 .ad-other small { color: #a9a39a; font-size: 0.7rem; }
+
+@media (max-width: 420px) {
+  .ad-other { flex: 1 1 100%; max-width: none; }
+}
 
 .ad-back { margin-top: 26px; text-align: center; }
 .ad-back .btn { text-decoration: none; }
 
 @media (max-width: 800px) {
   .ad-head { grid-template-columns: 1fr; text-align: center; }
-  .ad-cover { max-width: 280px; margin: 0 auto; }
+  .ad-cover { width: min(280px, 72vw); max-width: none; margin: 0 auto; }
   .ad-meta .album-meta { justify-content: center; }
   .ad-track audio { display: none; }
 }
+
+/* تصاویر داخل صفحه‌ی جزئیات هیچ‌وقت از قاب خودشان بزرگ‌تر نشوند */
+.album-detail-wrap img { max-width: 100%; height: auto; }
+.album-detail-wrap { overflow-x: hidden; }
