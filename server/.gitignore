@@ -2,3 +2,6 @@ node_modules/
 .env
 uploads/
 *.log
+
+# دیتابیس جاسازیشده (embedded postgres — ساخته npm run db:embedded)
+.pgdata/

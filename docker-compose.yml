@@ -1,0 +1,37 @@
+# ============================================================
+# OMID RASTAR — دیتابیس محلی با Docker (راهِ جایگزین)
+# ------------------------------------------------------------
+# این compose فقط PostgreSQL را بالا می‌آورد (برنامه با npm روی خود
+# سیستم اجرا می‌شود تا توسعه راحت‌تر باشد). یوزر/رمز/دیتابیس دقیقاً
+# با پیش‌فرض پروژه یکی است؛ پس بدون تغییر .env جواب می‌دهد.
+#
+#   docker compose up -d
+#   cd server && npm install
+#   npm run migrate && npm run seed && npm run dev
+#
+# اگر پورت 5432 روی سیستم اشغال است: دست «5432:5432» را به «5433:5432»
+# عوض کن و در server/.env مقدار DATABASE_URL را با همان پورت بگذار.
+# ============================================================
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: omid-stare-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: omid
+      POSTGRES_PASSWORD: omid
+      POSTGRES_DB: omid_stare
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # دیتابیس تست (omid_stare_test) فقط در اولین اجرا ساخته می‌شود
+      - ./server/scripts/db-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U omid -d omid_stare"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:

@@ -12,6 +12,23 @@
     document.getElementById("profileUsername").textContent = "@" + user.email.split("@")[0];
     if (user.avatarUrl) document.getElementById("avatarImg").src = user.avatarUrl;
 
+    // اگه مدیر است → کارت پنل ادمین بالای داشبورد
+    if (user.role === "admin") {
+      var grid = document.querySelector(".dash-grid");
+      if (grid) {
+        var a = document.createElement("a");
+        a.className = "dash-card";
+        a.href = "admin.html";
+        a.style.borderColor = "rgba(255,45,149,0.35)";
+        a.innerHTML =
+          '<span class="dash-icon">⚙️</span>' +
+          "<h3>پنل ادمین</h3>" +
+          "<p>مدیریت محصولات، سفارش‌ها، پیام‌ها، کوپن‌ها و …</p>" +
+          '<span class="dash-arrow">← ورود به پنل</span>';
+        grid.insertBefore(a, grid.firstChild);
+      }
+    }
+
     // آمار + کوپن‌های من
     API.get("/users/me").then(function (d) {
       var me = d.data;

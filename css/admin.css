@@ -1,0 +1,175 @@
+/* ============================================
+   ADMIN.CSS — پنل مدیریت OMID RASTAR (psychedelic/dark)
+   ============================================ */
+:root{
+  --bg:#08070f; --panel:#14101f; --panel2:#1a1526;
+  --line:rgba(255,255,255,.09); --txt:#f7f2e8; --mut:#a9a39a;
+  --magenta:#ff2d95; --cyan:#00ffd1; --amber:#ffc24b; --lime:#d9ff00; --red:#ff4d6d;
+  --radius:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{min-height:100%}
+body{
+  font-family:"Vazirmatn","Space Grotesk",Tahoma,sans-serif;
+  background:var(--bg); color:var(--txt); line-height:1.7;
+  overflow-x:hidden;
+}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit}
+
+/* ---------- پس‌زمینه ---------- */
+.admin-bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+.admin-bg img{width:100%;height:100%;object-fit:cover;opacity:.16;filter:saturate(1.2)}
+.admin-bg .veil{position:absolute;inset:0;background:
+  linear-gradient(180deg,rgba(8,7,15,.82) 0%,rgba(8,7,15,.92) 45%,rgba(8,7,15,.97) 100%)}
+
+.wrap{position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:18px 18px 60px}
+
+/* ---------- نوار بالا ---------- */
+.topbar{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  background:rgba(16,12,28,.72);border:1px solid var(--line);
+  border-radius:18px;padding:12px 16px;margin-bottom:18px;
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+}
+.logo{direction:ltr;display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:2px;font-size:.95rem}
+.logo img{height:30px;width:auto}
+.logo b{color:var(--cyan)}
+.who{margin-inline-start:auto;display:flex;align-items:center;gap:10px;font-size:.85rem;color:var(--mut)}
+.who .role{background:rgba(255,45,149,.14);color:var(--magenta);border:1px solid rgba(255,45,149,.35);
+  padding:1px 10px;border-radius:999px;font-size:.68rem;font-weight:900;letter-spacing:1px}
+.topbar a.link-site,.topbar button.ghost{
+  border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--txt);
+  padding:6px 14px;border-radius:10px;font-size:.8rem;transition:.2s
+}
+.topbar a.link-site:hover{border-color:rgba(0,255,209,.5);color:var(--cyan)}
+.topbar button.ghost:hover{border-color:rgba(255,77,109,.5);color:var(--red)}
+
+/* ---------- گیت ورود ---------- */
+.gate{max-width:420px;margin:7vh auto 0;background:var(--panel);border:1px solid var(--line);
+  border-radius:22px;padding:30px 28px;text-align:center}
+.gate h1{font-size:1.3rem;margin-bottom:4px}
+.gate h1 span{color:var(--cyan)}
+.gate p.sub{color:var(--mut);font-size:.82rem;margin-bottom:20px}
+.gate label{display:block;text-align:right;font-size:.78rem;color:var(--mut);margin:12px 0 5px}
+.gate input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--line);
+  border-radius:12px;color:var(--txt);padding:10px 13px;outline:none;transition:.2s}
+.gate input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,255,209,.12)}
+.gate .err{color:var(--red);font-size:.8rem;min-height:22px;margin-top:8px}
+.btn-primary{
+  width:100%;margin-top:10px;border:none;border-radius:12px;padding:11px;
+  background:linear-gradient(90deg,var(--magenta),#7a2bff);color:#fff;
+  font-weight:900;font-size:.92rem;transition:.25s;letter-spacing:.5px
+}
+.btn-primary:hover{filter:brightness(1.15);box-shadow:0 0 18px rgba(255,45,149,.35)}
+.gate .hint{margin-top:16px;font-size:.72rem;color:var(--mut);direction:rtl}
+.gate .hint code{color:var(--amber);direction:ltr;display:inline-block}
+
+/* ---------- چیدمان پنل ---------- */
+.panel{display:grid;grid-template-columns:205px 1fr;gap:16px;align-items:start}
+.side{
+  background:rgba(16,12,28,.7);border:1px solid var(--line);border-radius:var(--radius);
+  padding:10px;position:sticky;top:14px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)
+}
+.side button{
+  display:flex;align-items:center;gap:10px;width:100%;text-align:right;
+  background:transparent;border:none;color:var(--mut);border-radius:11px;
+  padding:9px 12px;font-size:.86rem;margin-bottom:2px;transition:.2s;font-weight:600
+}
+.side button:hover{background:rgba(255,255,255,.05);color:var(--txt)}
+.side button.on{background:linear-gradient(90deg,rgba(255,45,149,.16),rgba(0,255,209,.06));
+  color:var(--txt);border:1px solid rgba(255,45,149,.3)}
+.side button .ic{font-size:1rem;width:20px;text-align:center}
+
+.content{min-width:0}
+.box{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:18px;margin-bottom:16px
+}
+.box h2{font-size:1.05rem;margin-bottom:2px}
+.box h2 span{color:var(--cyan)}
+.box .desc{color:var(--mut);font-size:.78rem;margin-bottom:14px}
+.box-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.box-head h2{margin:0}
+.box-head .spacer{margin-inline-start:auto}
+button.small{
+  border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--txt);
+  padding:5px 13px;border-radius:10px;font-size:.76rem;transition:.2s;font-weight:700
+}
+button.small:hover{border-color:var(--cyan);color:var(--cyan)}
+button.small.danger:hover{border-color:var(--red);color:var(--red)}
+button.small:disabled{opacity:.4;cursor:not-allowed}
+
+/* ---------- استات‌ها ---------- */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:6px}
+.stat{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px}
+.stat .k{font-size:.72rem;color:var(--mut);letter-spacing:.4px}
+.stat .v{font-size:1.45rem;font-weight:900;margin-top:2px;color:var(--txt)}
+.stat .v.cyan{color:var(--cyan)} .stat .v.magenta{color:var(--magenta)}
+.stat .v.amber{color:var(--amber)} .stat .v.lime{color:var(--lime)}
+.stat .s{font-size:.68rem;color:var(--mut)}
+
+/* ---------- جدول‌ها ---------- */
+.tbl-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--line)}
+table.tbl{width:100%;border-collapse:collapse;font-size:.82rem;min-width:640px}
+.tbl th{background:rgba(255,255,255,.04);color:var(--mut);font-weight:800;font-size:.72rem;
+  text-align:right;padding:9px 12px;white-space:nowrap;letter-spacing:.4px}
+.tbl td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:middle}
+.tbl tr:hover td{background:rgba(255,255,255,.02)}
+.tbl img.thumb{width:44px;height:44px;object-fit:cover;border-radius:9px;border:1px solid var(--line);background:#000}
+.chip{display:inline-block;padding:1px 9px;border-radius:999px;font-size:.68rem;font-weight:800;border:1px solid var(--line)}
+.chip.ok{color:var(--lime);border-color:rgba(217,255,0,.35);background:rgba(217,255,0,.07)}
+.chip.no{color:var(--red);border-color:rgba(255,77,109,.35);background:rgba(255,77,109,.07)}
+.chip.warn{color:var(--amber);border-color:rgba(255,194,75,.35);background:rgba(255,194,75,.07)}
+.chip.info{color:var(--cyan);border-color:rgba(0,255,209,.35);background:rgba(0,255,209,.07)}
+.mut{color:var(--mut);font-size:.78rem}
+.mono{direction:ltr;unicode-bidi:embed;font-family:ui-monospace,Consolas,monospace}
+.tbl select,.tbl input[type=number],.tbl input[type=text]{
+  background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--txt);
+  border-radius:8px;padding:4px 6px;font-size:.78rem;max-width:130px;outline:none
+}
+.tbl select:focus,.tbl input:focus{border-color:var(--cyan)}
+.actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-start}
+.actions button{white-space:nowrap}
+
+/* ---------- فرم‌ها ---------- */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.field label{display:block;font-size:.72rem;color:var(--mut);margin-bottom:4px}
+.field input,.field select,.field textarea{
+  width:100%;background:rgba(255,255,255,.05);border:1px solid var(--line);
+  border-radius:10px;color:var(--txt);padding:8px 11px;font-size:.84rem;outline:none;transition:.2s
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--cyan)}
+.field textarea{min-height:70px;resize:vertical}
+.field input[type=checkbox]{width:auto}
+.field.full{grid-column:1/-1}
+.check{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--mut)}
+
+/* ---------- پیام‌ها / نظرات ---------- */
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:13px;padding:13px 15px;margin-bottom:10px}
+.card .row1{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.card .row1 .nm{font-weight:800}
+.card .row1 .dt{margin-inline-start:auto;color:var(--mut);font-size:.72rem}
+.card .msg{margin-top:6px;font-size:.86rem;white-space:pre-wrap}
+.card .qa{margin-top:6px;font-size:.85rem}
+
+/* ---------- کوپن / کدها ---------- */
+.codes{background:#0d1120;border:1px dashed rgba(0,255,209,.35);border-radius:13px;
+  padding:12px 14px;margin-top:12px;font-family:ui-monospace,Consolas,monospace;
+  font-size:.82rem;direction:ltr;text-align:left;line-height:2;white-space:pre-wrap;word-break:break-all}
+.codes-title{font-family:"Vazirmatn",Tahoma,sans-serif;color:var(--lime);font-weight:900;font-size:.8rem;margin-bottom:4px;direction:rtl;text-align:right}
+
+.notif-item{display:flex;gap:12px;align-items:flex-start;padding:10px 4px;border-bottom:1px dashed var(--line);font-size:.82rem}
+.notif-item:last-child{border-bottom:none}
+.notif-item .t{color:var(--cyan);font-weight:800;direction:ltr}
+.empty{color:var(--mut);text-align:center;padding:26px 0;font-size:.85rem}
+.hidden{display:none!important}
+
+footer.foot{text-align:center;color:var(--mut);font-size:.72rem;margin-top:26px;opacity:.7}
+
+@media (max-width:900px){
+  .panel{grid-template-columns:1fr}
+  .side{position:static;display:flex;overflow-x:auto;gap:4px;padding:8px}
+  .side button{width:auto;white-space:nowrap;margin:0}
+}
