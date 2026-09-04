@@ -18,7 +18,7 @@ async function authRoutes(app) {
   app.post('/auth/register', rlAuth, async (req, reply) => {
     try {
       const { user, session } = await authService.register(req.body || {}, req);
-      reply.cookie(config.cookieName, session.token, sessionService.cookieOptions(session.expiresAt));
+      reply.cookie(config.cookieName, session.token, sessionService.cookieOptions(session.expiresAt, req));
       return created(reply, user, `به ووید خوش اومدی، ${user.name}! 🌀`);
     } catch (err) {
       return fail(reply, err, req.log);
@@ -28,7 +28,7 @@ async function authRoutes(app) {
   app.post('/auth/login', rlAuth, async (req, reply) => {
     try {
       const { user, session } = await authService.login(req.body || {}, req, req.log);
-      reply.cookie(config.cookieName, session.token, sessionService.cookieOptions(session.expiresAt));
+      reply.cookie(config.cookieName, session.token, sessionService.cookieOptions(session.expiresAt, req));
       return ok(reply, user, `خوش برگشتی، ${user.name}! 👁️`);
     } catch (err) {
       return fail(reply, err, req.log);

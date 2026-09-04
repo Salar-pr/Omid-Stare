@@ -44,6 +44,12 @@ const config = {
   cookieSecure: process.env.COOKIE_SECURE !== undefined && process.env.COOKIE_SECURE !== ''
     ? boolish(process.env.COOKIE_SECURE, isProd)
     : isProd,
+  // اجازه‌ی نمایش سایت داخل iframe دامنه‌ی دیگر (محیط پیش‌نمایش/دمو).
+  // پیش‌فرض: خاموش در production، روشن در غیر production.
+  // با ALLOW_EMBEDDING=true/false می‌توان صریح تعیین کرد.
+  allowEmbedding: process.env.ALLOW_EMBEDDING !== undefined && process.env.ALLOW_EMBEDDING !== ''
+    ? boolish(process.env.ALLOW_EMBEDDING, false)
+    : !isProd,
   sameSite: isProd ? 'strict' : 'lax',
   cookieName: 'sid',
 

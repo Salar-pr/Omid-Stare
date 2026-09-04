@@ -118,7 +118,20 @@ async function buildApp({ logger = true } = {}) {
     // بقیه هدرهای امنیتی فعالند.
     contentSecurityPolicy: false,
     crossOriginResourcePolicy: { policy: 'same-site' },
+    // X-Frame-Options: SAMEORIGIN مانع نمایش سایت داخل iframe از دامنه‌ی دیگر می‌شود.
+    // در محیط پیش‌نمایش/توسعه این باعث می‌شود صفحه اصلاً لود نشود یا کوکی سشن
+    // ذخیره نشود (کاربر بعد از ورود دوباره به صفحه‌ی ورود پرت می‌شود).
+    // در production همچنان روشن می‌ماند (محافظت clickjacking).
+    frameguard: config.allowEmbedding ? false : { action: 'sameorigin' },
   });
+
+  // وقتی جاسازی در iframe مجاز است، کوکی سشن باید SameSite=None; Secure باشد
+  // وگرنه مرورگر آن را در context شخص‌ثالث نمی‌فرستد.
+  if (config.allowEmbedding) {
+    app.addHook('onSend', async (req, reply) => {
+      reply.removeHeader('x-frame-options');
+    });
+  }
 
   // rate limit جهانی + per-route (auth/coupon/contact/order در routeهایشان سخت‌ترند)
   await app.register(rateLimit, {

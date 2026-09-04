@@ -66,15 +66,49 @@ async function destroySession(token) {
   await pool.query('DELETE FROM sessions WHERE token_hash = $1', [sha256(token)]);
 }
 
-/** cookie options یکدست برای همه middlewareها */
-function cookieOptions(expiresAt) {
-  return {
+/**
+ * cookie options یکدست برای همه middlewareها.
+ *
+ * @param expiresAt تاریخ انقضای سشن
+ * @param req       درخواست (اختیاری) — برای تشخیص اینکه سایت داخل iframe
+ *                  یک دامنه‌ی دیگر باز شده یا نه.
+ *
+ * چرا req لازم است؟
+ *   وقتی صفحه داخل iframe یک دامنه‌ی دیگر است (محیط پیش‌نمایش/دمو)، مرورگر
+ *   کوکی SameSite=Lax را در آن context نمی‌فرستد. نتیجه: کاربر وارد می‌شود،
+ *   ولی درخواست بعدی بدون کوکی می‌رود و دوباره به صفحه‌ی ورود پرت می‌شود.
+ *   در این حالت باید SameSite=None بدهیم — که مرورگر فقط همراه Secure می‌پذیرد.
+ *   روی HTTP ساده (localhost) None+Secure کار نمی‌کند، پس آنجا Lax می‌ماند.
+ */
+function cookieOptions(expiresAt, req) {
+  const opts = {
     path: '/',
     httpOnly: true,
     secure: config.cookieSecure,
     sameSite: config.sameSite,
     expires: expiresAt,
   };
+
+  if (!config.allowEmbedding || !req) return opts;
+
+  // نکته‌ی مهم: نمی‌توان با هدر Origin تشخیص داد که صفحه داخل iframe است یا نه.
+  // درخواست fetch از داخل خود فریم می‌آید، پس Origin دقیقاً برابر host است و
+  // «cross-site» به نظر نمی‌رسد — در حالی که مرورگر کوکی را third-party حساب
+  // می‌کند (چون صفحه‌ی سطح‌بالا دامنه‌ی دیگری است) و با Lax آن را نمی‌فرستد.
+  //
+  // بنابراین وقتی جاسازی مجاز است، روی HTTPS همیشه SameSite=None می‌دهیم.
+  // (روی HTTP ساده ممکن نیست: مرورگر None را فقط با Secure می‌پذیرد و
+  //  Secure روی http کار نمی‌کند — آنجا Lax می‌ماند که برای localhost کافی است.)
+  const proto =
+    (req.headers && req.headers['x-forwarded-proto']) || req.protocol || 'http';
+  const isHttps = String(proto).split(',')[0].trim() === 'https';
+
+  if (isHttps) {
+    opts.sameSite = 'none';
+    opts.secure = true; // الزام مرورگر برای SameSite=None
+  }
+
+  return opts;
 }
 
 module.exports = {
