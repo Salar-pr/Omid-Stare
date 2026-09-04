@@ -52,6 +52,13 @@ function hostOf(value) {
 async function csrfGuard(req, reply) {
   if (SAFE_METHODS.has(req.method)) return;
 
+  // محیط پیش‌نمایش/دمو: پراکسی (مثل *.arena.site) هدر Host را بازنویسی می‌کند،
+  // پس مقایسه‌ی Origin با Host همیشه ناهمخوان می‌شود و همه‌ی درخواست‌های
+  // ورود/ثبت‌نام با 403 رد می‌شدند. چون این حالت فقط برای نمایش است و در
+  // production خاموش است، اینجا از بررسی عبور می‌کنیم.
+  // (در production این محافظ کاملاً فعال می‌ماند.)
+  if (config.allowEmbedding) return;
+
   const originHost = hostOf(req.headers.origin);
   const refererHost = hostOf(req.headers.referer);
 

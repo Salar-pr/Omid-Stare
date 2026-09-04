@@ -99,9 +99,20 @@ function cookieOptions(expiresAt, req) {
   // بنابراین وقتی جاسازی مجاز است، روی HTTPS همیشه SameSite=None می‌دهیم.
   // (روی HTTP ساده ممکن نیست: مرورگر None را فقط با Secure می‌پذیرد و
   //  Secure روی http کار نمی‌کند — آنجا Lax می‌ماند که برای localhost کافی است.)
-  const proto =
-    (req.headers && req.headers['x-forwarded-proto']) || req.protocol || 'http';
-  const isHttps = String(proto).split(',')[0].trim() === 'https';
+  const h = (req.headers || {});
+  const proto = h['x-forwarded-proto'] || req.protocol || 'http';
+  let isHttps = String(proto).split(',')[0].trim() === 'https';
+
+  // بعضی پراکسی‌های پیش‌نمایش (مثل *.arena.site) هدر x-forwarded-proto
+  // نمی‌فرستند. در آن حالت اتکا به آن هدر باعث می‌شود کوکی Lax بماند و
+  // در iframe اصلاً ذخیره نشود. پس اگر میزبان درخواست یک آدرس محلی نیست،
+  // یعنی از طریق یک پراکسی عمومی آمده‌ایم و آن پراکسی حتماً HTTPS است.
+  if (!isHttps) {
+    const host = String(h['x-forwarded-host'] || h.host || '').split(':')[0];
+    const isLocal =
+      host === 'localhost' || host === '127.0.0.1' || host === '::1' || host === '';
+    if (!isLocal) isHttps = true;
+  }
 
   if (isHttps) {
     opts.sameSite = 'none';

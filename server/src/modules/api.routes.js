@@ -49,6 +49,29 @@ async function apiRoutes(app) {
   // (خط دفاع اول کوکی SameSite است — این مکمل آن است، نه جایگزین.)
   app.addHook('onRequest', require('../middlewares/csrf').csrfGuard);
 
+  // عیب‌یابی محیط پیش‌نمایش: نشان می‌دهد سرور دقیقاً چه هدرهایی دریافت می‌کند
+  // و چه کوکی‌ای صادر خواهد کرد. فقط در حالت allowEmbedding فعال است.
+  if (config.allowEmbedding) {
+    app.get('/_diag', async (req) => {
+      const s = require('./auth/session.service');
+      const o = s.cookieOptions(new Date(Date.now() + 6e5), req);
+      return {
+        دریافتی: {
+          host: req.headers.host,
+          'x-forwarded-proto': req.headers['x-forwarded-proto'] || null,
+          'x-forwarded-host': req.headers['x-forwarded-host'] || null,
+          origin: req.headers.origin || null,
+          referer: req.headers.referer || null,
+          کوکی_ارسالی: req.headers.cookie || null,
+        },
+        کوکی_صادرشده: { sameSite: o.sameSite, secure: o.secure, httpOnly: o.httpOnly },
+        وضعیت: o.sameSite === 'none' && o.secure
+          ? 'درست ✅ — کوکی در iframe کار می‌کند'
+          : 'مشکل ❌ — کوکی در iframe ذخیره نمی‌شود',
+      };
+    });
+  }
+
   // health — همیشه زنده + وضعیت DB
   app.get('/health', async (req, reply) => {
     let db = 'down';
