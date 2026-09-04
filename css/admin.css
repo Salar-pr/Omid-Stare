@@ -173,3 +173,60 @@ footer.foot{text-align:center;color:var(--mut);font-size:.72rem;margin-top:26px;
   .side{position:static;display:flex;overflow-x:auto;gap:4px;padding:8px}
   .side button{width:auto;white-space:nowrap;margin:0}
 }
+
+/* ============================================
+   وضعیت ارسال (fulfillment)
+   ============================================ */
+/* ۶ کارت → دو ردیف مساوی ۳تایی (به‌جای ۴+۲ ناهموار) */
+.ff-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+@media (max-width:1000px){.ff-cards{grid-template-columns:repeat(2,1fr)}}
+.ff-card{display:flex;gap:11px;align-items:flex-start;background:var(--panel2);
+  border:1px solid var(--line);border-radius:14px;padding:13px 14px}
+.ff-card .ff-ic{font-size:1.5rem;line-height:1;flex:0 0 auto;opacity:.9}
+.ff-card .ff-body{min-width:0}
+.ff-card .ff-num{font-size:1.5rem;font-weight:900;line-height:1.1;color:var(--txt)}
+.ff-card .ff-lbl{font-size:.76rem;font-weight:700;color:var(--txt);opacity:.85;margin-top:1px}
+.ff-card .ff-sub{font-size:.67rem;color:var(--mut);margin-top:3px;line-height:1.5}
+/* رنگ بر اساس اهمیت */
+.ff-card.ok{border-color:rgba(217,255,0,.3)}
+.ff-card.ok .ff-num{color:var(--lime)}
+.ff-card.warn{border-color:rgba(255,194,75,.3)}
+.ff-card.warn .ff-num{color:var(--amber)}
+.ff-card.bad{border-color:rgba(255,77,109,.42);background:rgba(255,77,109,.05)}
+.ff-card.bad .ff-num{color:var(--red)}
+.ff-card.info .ff-num{color:var(--cyan)}
+.ff-card.mut .ff-num{color:var(--mut)}
+
+/* نوار پیشرفت انجام سفارش */
+.ff-progress{margin:0 0 14px}
+.ff-bar{height:9px;border-radius:999px;background:rgba(255,255,255,.06);
+  border:1px solid var(--line);overflow:hidden}
+.ff-bar span{display:block;height:100%;width:0;border-radius:999px;
+  background:linear-gradient(90deg,var(--cyan),var(--lime));transition:width .5s ease}
+.ff-bar-legend{display:flex;gap:16px;flex-wrap:wrap;align-items:center;
+  margin-top:7px;font-size:.73rem;color:var(--txt)}
+.ff-bar-legend b{font-weight:900}
+.ff-bar-legend .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-left:5px}
+.ff-bar-legend .dot.done{background:var(--lime)}
+.ff-bar-legend .dot.wait{background:var(--amber)}
+
+/* تب‌های گروه */
+.ff-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+.ff-tabs button{background:rgba(255,255,255,.04);border:1px solid var(--line);
+  color:var(--mut);border-radius:999px;padding:6px 14px;font-size:.78rem;
+  font-weight:800;cursor:pointer;font-family:inherit;transition:.18s}
+.ff-tabs button:hover{color:var(--txt);border-color:rgba(255,255,255,.22)}
+.ff-tabs button.on{background:rgba(0,255,209,.1);border-color:rgba(0,255,209,.45);color:var(--cyan)}
+
+/* ردیف معطل‌مانده */
+.tbl tr.row-stale td{background:rgba(255,77,109,.055)}
+.tbl tr.row-stale:hover td{background:rgba(255,77,109,.09)}
+
+@media (max-width:560px){
+  .ff-cards{grid-template-columns:repeat(2,1fr);gap:9px}
+  .ff-card{padding:11px;gap:8px}
+  .ff-card .ff-ic{font-size:1.2rem}
+  .ff-card .ff-num{font-size:1.2rem}
+  .ff-card .ff-lbl{font-size:.72rem}
+  .ff-card .ff-sub{font-size:.63rem}
+}
