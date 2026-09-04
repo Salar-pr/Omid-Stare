@@ -88,7 +88,19 @@ async function buildApp({ logger = true } = {}) {
         censor: '[REDACTED]',
       },
     },
-    trustProxy: true,
+    // trustProxy را کورکورانه true نکن: با true هر کلاینتی می‌تواند X-Forwarded-For
+    // جعل کند و rate limit مبتنی بر IP و IP ثبت‌شده‌ی سشن را بی‌اثر/آلوده کند.
+    // TRUST_PROXY را فقط وقتی ست کن که واقعاً پشت پراکسی هستی:
+    //   TRUST_PROXY=1            → یک هاپ پراکسی (رایج: nginx/Caddy جلوی اپ)
+    //   TRUST_PROXY=10.0.0.0/8   → فقط این رنج قابل اعتماد است
+    //   TRUST_PROXY=false/خالی   → به هیچ هدر پراکسی اعتماد نکن (پیش‌فرض امن)
+    trustProxy: (() => {
+      const v = (process.env.TRUST_PROXY || '').trim();
+      if (!v || v === 'false' || v === '0') return false;
+      if (v === 'true') return true;
+      if (/^\d+$/.test(v)) return Number(v); // تعداد هاپ‌های قابل اعتماد
+      return v; // لیست IP/CIDR جداشده با کاما
+    })(),
     bodyLimit: 1024 * 1024, // 1MB JSON
   });
 
@@ -113,9 +125,16 @@ async function buildApp({ logger = true } = {}) {
     global: true,
     max: config.rateLimit.global,
     timeWindow: '15 minutes',
-    errorResponseBuilder: () => ({
+    // statusCode لازم است وگرنه error handler آن را نمی‌شناسد و 500 برمی‌گرداند
+    errorResponseBuilder: (req, context) => ({
+      statusCode: 429,
+      code: 'FST_RATE_LIMIT',
       success: false,
-      error: { code: 'RATE_LIMITED', message: 'درخواستات خیلی شلوغه — چند دقیقه بعد امتحان کن.' },
+      error: {
+        code: 'RATE_LIMITED',
+        message: 'درخواستات خیلی شلوغه — چند دقیقه بعد امتحان کن.',
+        retryAfterSec: Math.ceil((context && context.ttl ? context.ttl : 0) / 1000) || undefined,
+      },
     }),
   });
 

@@ -9,6 +9,10 @@ const { checkConnection } = require('../db/client');
 const config = require('../config');
 
 async function apiRoutes(app) {
+  // دفاع CSRF لایه‌دوم: درخواست‌های تغییردهنده از مبدأ بیگانه رد می‌شوند.
+  // (خط دفاع اول کوکی SameSite است — این مکمل آن است، نه جایگزین.)
+  app.addHook('onRequest', require('../middlewares/csrf').csrfGuard);
+
   // health — همیشه زنده + وضعیت DB
   app.get('/health', async (req, reply) => {
     let db = 'down';

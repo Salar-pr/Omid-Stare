@@ -46,7 +46,14 @@ function fail(reply, err, log) {
   }
 
   // rate limit (429) — @fastify/rate-limit error
-  if (err && (err.statusCode === 429 || err.code === 'FST_RATE_LIMIT')) {
+  // نکته: بعضی نسخه‌ها بدنه‌ی errorResponseBuilder را بدون statusCode throw می‌کنند،
+  // بنابراین علاوه بر statusCode، خود کد RATE_LIMITED را هم تشخیص می‌دهیم.
+  if (
+    err &&
+    (err.statusCode === 429 ||
+      err.code === 'FST_RATE_LIMIT' ||
+      (err.error && err.error.code === 'RATE_LIMITED'))
+  ) {
     const body =
       err && err.success === false && err.error
         ? { success: false, error: err.error }
