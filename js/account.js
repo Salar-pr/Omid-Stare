@@ -35,7 +35,7 @@
 
   function go(msg) {
     if (window.showToast) window.showToast(msg);
-    setTimeout(function () { window.location.href = "profile.html"; }, 700);
+    setTimeout(function () { window.location.href = window.API.withSession("profile.html"); }, 700);
   }
 
   function showErr(el, err, fallback) {

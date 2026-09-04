@@ -9,6 +9,42 @@ const { checkConnection } = require('../db/client');
 const config = require('../config');
 
 async function apiRoutes(app) {
+  // CORS فقط برای محیط پیش‌نمایش/دمو (allowEmbedding). باید *قبل از* CSRF
+  // ثبت شود تا preflight (OPTIONS) پیش از هر بررسی دیگری پاسخ بگیرد.
+  //
+  // چرا لازم است؟ اگر iframe بدون allow-same-origin در sandbox باشد، صفحه در
+  // «مبدأ مات» اجرا می‌شود و مرورگر Origin: null می‌فرستد؛ بدون این هدرها
+  // همه‌ی fetchها با خطای CORS رد می‌شوند و ورود اصلاً کار نمی‌کند.
+  //
+  // نکته: با Origin: null نمی‌توان credentials را مجاز کرد (مرورگر
+  // Allow-Origin: null + Allow-Credentials: true را رد می‌کند). در آن حالت
+  // کوکی هم در دسترس نیست، پس احراز هویت از مسیر Authorization: Bearer
+  // انجام می‌شود که به CORS credentials نیازی ندارد.
+  //
+  // در production خاموش است، پس سیاست same-origin دست‌نخورده می‌ماند.
+  if (config.allowEmbedding) {
+    app.addHook('onRequest', async (req, reply) => {
+      const origin = req.headers.origin;
+      if (!origin) return;
+
+      const opaque = origin === 'null';
+      reply.header('Access-Control-Allow-Origin', opaque ? '*' : origin);
+      if (!opaque) {
+        reply.header('Access-Control-Allow-Credentials', 'true');
+      }
+      reply.header('Vary', 'Origin');
+    });
+
+    // پاسخ به preflight. با wildcard ثبت می‌شود چون Fastify برای مسیرهای
+    // معمولی هندلر OPTIONS ندارد و بدون این، preflight با 404 رد می‌شود.
+    app.options('/*', async (req, reply) => {
+      reply.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+      reply.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+      reply.header('Access-Control-Max-Age', '600');
+      return reply.code(204).send();
+    });
+  }
+
   // دفاع CSRF لایه‌دوم: درخواست‌های تغییردهنده از مبدأ بیگانه رد می‌شوند.
   // (خط دفاع اول کوکی SameSite است — این مکمل آن است، نه جایگزین.)
   app.addHook('onRequest', require('../middlewares/csrf').csrfGuard);

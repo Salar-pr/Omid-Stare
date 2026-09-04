@@ -56,7 +56,7 @@
         .catch(function () {})
         .finally(function () {
           if (window.showToast) window.showToast("از ووید خارج شدی. پرتال همیشه بازه 🌀");
-          setTimeout(function () { window.location.href = "account.html"; }, 700);
+          setTimeout(function () { window.location.href = window.API.withSession("account.html"); }, 700);
         });
     });
   });

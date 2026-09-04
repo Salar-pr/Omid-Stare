@@ -56,7 +56,7 @@
 
   function needAuth(msg) {
     if (window.showToast) window.showToast(msg, true);
-    setTimeout(function () { window.location.href = "account.html"; }, 1200);
+    setTimeout(function () { window.location.href = window.API.withSession("account.html"); }, 1200);
   }
 
   // نوار خرید افقی (زیر کارت آلبوم / زیر هدر صفحه‌ی جزئیات)

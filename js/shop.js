@@ -36,7 +36,7 @@
   // ---------- session (از API) ----------
   function needAuth(msg) {
     if (window.showToast) window.showToast(msg, true);
-    setTimeout(function () { window.location.href = "account.html"; }, 1200);
+    setTimeout(function () { window.location.href = window.API.withSession("account.html"); }, 1200);
     return false;
   }
 
@@ -70,10 +70,10 @@
     }
   }
 
-  if (cartBtn) cartBtn.addEventListener("click", function () { window.location.href = "cart.html"; });
+  if (cartBtn) cartBtn.addEventListener("click", function () { window.location.href = window.API.withSession("cart.html"); });
   if (wishlistBtn) wishlistBtn.addEventListener("click", function () {
     if (!user) { needAuth("برای ویش‌لیست وارد شو 🌀"); return; }
-    window.location.href = "wishlist.html";
+    window.location.href = window.API.withSession("wishlist.html");
   });
 
   // ---------- query از state ----------
@@ -149,7 +149,7 @@
     card.addEventListener("click", function (e) {
       if (e.target.closest(".add-btn") || e.target.closest(".wishlist-btn")) return;
       localStorage.setItem("or_last_product", p.slug);
-      window.location.href = "product.html?slug=" + p.slug;
+      window.location.href = window.API.withSession("product.html?slug=" + p.slug);
     });
 
     var wb = card.querySelector(".wishlist-btn");

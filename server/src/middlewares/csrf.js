@@ -58,6 +58,11 @@ async function csrfGuard(req, reply) {
   // نه Origin نه Referer → کلاینت غیرمرورگری (curl / موبایل). CSRF مصداق ندارد.
   if (!originHost && !refererHost) return;
 
+  // Origin: null در محیط پیش‌نمایش یعنی صفحه داخل iframe با مبدأ مات اجرا شده.
+  // در آن حالت مرورگر کوکی نمی‌فرستد، پس احراز هویت فقط با Bearer ممکن است —
+  // و توکن Bearer ذاتاً مصون از CSRF است (مهاجم به آن دسترسی ندارد).
+  if (config.allowEmbedding && req.headers.origin === 'null') return;
+
   const claimed = originHost || refererHost;
   const allowed = new Set(allowedHosts());
   // میزبان خود درخواست را هم مجاز بدان (سازگار با dev و دامنه‌های پیش‌نمایش)

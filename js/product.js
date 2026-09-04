@@ -6,7 +6,7 @@
 
   function needAuth(msg) {
     if (window.showToast) window.showToast(msg, true);
-    setTimeout(function () { window.location.href = "account.html"; }, 1200);
+    setTimeout(function () { window.location.href = window.API.withSession("account.html"); }, 1200);
     return false;
   }
 
@@ -155,7 +155,7 @@
       })
         .then(function () {
           window.showToast("به سبد اضافه شد — میری سبد 🛒");
-          setTimeout(function () { window.location.href = "cart.html"; }, 900);
+          setTimeout(function () { window.location.href = window.API.withSession("cart.html"); }, 900);
         })
         .catch(function (err) {
           window.showToast && window.showToast(API.msg(err), true);
@@ -169,7 +169,7 @@
       rc.className = "related-card";
       rc.innerHTML = '<img loading="lazy" src="' + rp.image + '" alt="' + escHtml(rp.name) + '"><b>' + escHtml(rp.name) + "</b><small>" + fmt(rp.price) + " تومان</small>";
       rc.addEventListener("click", function () {
-        window.location.href = "product.html?slug=" + rp.slug;
+        window.location.href = window.API.withSession("product.html?slug=" + rp.slug);
       });
       rg.appendChild(rc);
     });

@@ -213,7 +213,7 @@
     window.API.post('/auth/logout')
       .catch(function () {})
       .finally(function () {
-        window.location.href = 'account.html';
+        window.location.href = window.API.withSession('account.html');
       });
   }
 

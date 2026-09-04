@@ -117,7 +117,12 @@ async function buildApp({ logger = true } = {}) {
     // CSP خاموش: frontend فعلی inline script/style زیاد دارد (هویت بصری حفظ می‌شود).
     // بقیه هدرهای امنیتی فعالند.
     contentSecurityPolicy: false,
-    crossOriginResourcePolicy: { policy: 'same-site' },
+    // Cross-Origin-Resource-Policy: same-site باعث می‌شود مرورگر در iframe
+    // بین‌دامنه‌ای همه‌ی CSS/JS را با ERR_BLOCKED_BY_RESPONSE.NotSameSite رد کند
+    // (صفحه بدون استایل و بدون جاوااسکریپت لود می‌شود و فرم‌ها کار نمی‌کنند).
+    // Cross-Origin-Opener-Policy هم context را ایزوله می‌کند.
+    crossOriginResourcePolicy: config.allowEmbedding ? { policy: 'cross-origin' } : { policy: 'same-site' },
+    crossOriginOpenerPolicy: config.allowEmbedding ? false : { policy: 'same-origin' },
     // X-Frame-Options: SAMEORIGIN مانع نمایش سایت داخل iframe از دامنه‌ی دیگر می‌شود.
     // در محیط پیش‌نمایش/توسعه این باعث می‌شود صفحه اصلاً لود نشود یا کوکی سشن
     // ذخیره نشود (کاربر بعد از ورود دوباره به صفحه‌ی ورود پرت می‌شود).

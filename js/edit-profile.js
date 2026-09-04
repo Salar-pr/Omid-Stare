@@ -103,7 +103,7 @@
       }
       chain.then(function () {
         window.showToast("تغییرات ذخیره شد! 🤘");
-        setTimeout(function () { window.location.href = "profile.html"; }, 1000);
+        setTimeout(function () { window.location.href = window.API.withSession("profile.html"); }, 1000);
       }).catch(function (err) {
         var m = API.msg(err, "ذخیره نشد");
         if (/رمز/.test(m)) setErr("err-curPass", m);
