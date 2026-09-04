@@ -61,8 +61,23 @@ async function registerStatic(app) {
       wildcard: true,
       cacheControl: false, // خودمان per-type ست می‌کنیم
       setHeaders: (raw, filePath) => {
-        const rel = filePath.slice(config.frontendDir.length).replace(/\\/g, '/');
-        raw.setHeader('Cache-Control', cacheHeaderFor(rel));
+        // نسخه‌های مختلف @fastify/static شیء متفاوتی می‌دهند: گاهی res خام
+        // (دارای setHeader) و گاهی reply فستیفای (دارای header). اگر هیچ‌کدام
+        // نبود بی‌سروصدا رد می‌شویم — کش هدر یک بهینه‌سازی است، نه چیز حیاتی،
+        // و نباید کل سرو فایل استاتیک را بشکند.
+        try {
+          const rel = String(filePath || '')
+            .slice(config.frontendDir.length)
+            .replace(/\\/g, '/');
+          const value = cacheHeaderFor(rel);
+          if (raw && typeof raw.setHeader === 'function') {
+            raw.setHeader('Cache-Control', value);
+          } else if (raw && typeof raw.header === 'function') {
+            raw.header('Cache-Control', value);
+          }
+        } catch (e) {
+          /* بی‌خیال — فایل باید سرو شود حتی اگر هدر کش ست نشد */
+        }
       },
     });
   });
