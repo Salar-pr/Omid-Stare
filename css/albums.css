@@ -262,8 +262,8 @@
 }
 
 .album-buybar {
-  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
-  padding: 12px 16px;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  padding: 14px 16px;
   border-top: 1px solid rgba(255,255,255,0.08);
   background:
     linear-gradient(100deg, rgba(255,45,149,0.07), rgba(122,44,255,0.07)),
@@ -286,14 +286,17 @@
 .album-buybar .bb-stock.out { color: #ff2d95; }
 .album-buybar .bb-soon { font-size: 0.78rem; color: #cdc6ba; }
 
+/* ستون عمودی: قیمت قدیم بالا، قیمت جدید پایین — روی هم نمی‌افتند */
 .album-buybar .bb-price {
-  font-size: 1rem; font-weight: 900; white-space: nowrap;
+  display: flex; flex-direction: column; align-items: flex-start;
+  justify-content: center; line-height: 1.35;
+  font-size: 1rem; font-weight: 900; white-space: nowrap; flex: none;
   background: linear-gradient(90deg, var(--lime, #d9ff00), var(--cyan, #00ffd1));
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 .album-buybar .bb-price small { font-size: 0.62rem; }
 .album-buybar .bb-old {
-  display: block; font-size: 0.64rem; color: #7a7570;
+  font-size: 0.64rem; color: #7a7570; line-height: 1.2;
   text-decoration: line-through; -webkit-text-fill-color: #7a7570;
 }
 
