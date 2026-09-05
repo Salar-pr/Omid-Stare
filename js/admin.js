@@ -353,7 +353,7 @@
               '<button class="small" type="button" data-act="album-up" data-id="' + a.id + '" title="بالا">↑</button>' +
               '<button class="small" type="button" data-act="album-down" data-id="' + a.id + '" title="پایین">↓</button>' +
               '<button class="small" type="button" data-act="album-pub" data-id="' + a.id + '" data-pub="' + a.isPublished + '">' + (a.isPublished ? 'پیش‌نویس کن' : 'منتشر کن') + '</button>' +
-              '<button class="small danger" type="button" data-act="album-del" data-id="' + a.id + '">حذف</button>' +
+              '<button class="small danger" type="button" data-act="album-del" data-id="' + a.id + '" data-title="' + esc(a.title) + '">حذف کامل</button>' +
               '</div></td></tr>';
           }).join('');
       }).catch(function (e) {
@@ -638,8 +638,12 @@
       return;
     }
     if (act === 'album-del') {
-      if (!confirm('آلبوم حذف شود؟')) return;
-      api('del', '/admin/albums/' + id)
+      // hard=1 یعنی حذف واقعی از دیتابیس (ترک‌ها هم با CASCADE پاک می‌شوند).
+      // بدون آن، سرور فقط is_published را false می‌کند و آلبوم در لیست می‌ماند —
+      // که باعث می‌شد به نظر برسد دکمه‌ی حذف کار نمی‌کند.
+      var t = btn.getAttribute('data-title') || 'این آلبوم';
+      if (!confirm('«' + t + '» برای همیشه حذف شود؟\n\nترک‌های آن هم پاک می‌شوند و برگشت‌پذیر نیست.\n\nاگر فقط می‌خواهید از سایت پنهان شود، به‌جای این از دکمه‌ی «پیش‌نویس کن» استفاده کنید.')) return;
+      api('del', '/admin/albums/' + id + '?hard=1')
         .then(function () { toast('آلبوم حذف شد'); LOADERS.albums(); })
         .catch(function (er) { failToast(er, 'خطا'); });
       return;
