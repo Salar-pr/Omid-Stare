@@ -40,10 +40,16 @@ const config = {
   // Auth / Session
   sessionTtlDays: int(process.env.SESSION_TTL_DAYS, 7),
   // برای امضای کوکی — قبلاً hard-code بود؛ حالا از env خوانده می‌شود (رفتار پیش‌فرض همان قبلی)
-  cookieSecret: process.env.COOKIE_SECRET || (isProd ? 'omid-stare-cookie-signing' : undefined),
+  cookieSecret: process.env.COOKIE_SECRET || undefined,
   cookieSecure: process.env.COOKIE_SECURE !== undefined && process.env.COOKIE_SECURE !== ''
     ? boolish(process.env.COOKIE_SECURE, isProd)
     : isProd,
+  // اجازه‌ی نمایش سایت داخل iframe دامنه‌ی دیگر (محیط پیش‌نمایش/دمو).
+  // پیش‌فرض: خاموش در production، روشن در غیر production.
+  // با ALLOW_EMBEDDING=true/false می‌توان صریح تعیین کرد.
+  allowEmbedding: process.env.ALLOW_EMBEDDING !== undefined && process.env.ALLOW_EMBEDDING !== ''
+    ? boolish(process.env.ALLOW_EMBEDDING, false)
+    : !isProd,
   sameSite: isProd ? 'strict' : 'lax',
   cookieName: 'sid',
 
@@ -83,5 +89,38 @@ const config = {
 
   testDatabaseUrl: process.env.DATABASE_URL_TEST || 'postgres://omid:omid@localhost:5432/omid_stare_test',
 };
+
+/**
+ * بررسی امنیتی هنگام بالا آمدن — فقط در production.
+ * جلوی دیپلوی با مقادیر پیش‌فرض/ناامن را می‌گیرد (fail-fast بهتر از رخنه‌ی خاموش است).
+ */
+function assertProductionSafety(c) {
+  if (!c.isProd) return;
+  const errors = [];
+
+  if (!c.cookieSecret || String(c.cookieSecret).length < 32) {
+    errors.push('COOKIE_SECRET تنظیم نشده یا کوتاه‌تر از ۳۲ کاراکتر است.');
+  }
+  if (/omid:omid@/.test(c.databaseUrl)) {
+    errors.push('DATABASE_URL هنوز رمز پیش‌فرض «omid:omid» را دارد.');
+  }
+  if (!c.cookieSecure) {
+    errors.push('COOKIE_SECURE در production باید true باشد (کوکی فقط روی HTTPS).');
+  }
+  if (c.adminPassword && /ChangeMe/i.test(c.adminPassword)) {
+    errors.push('ADMIN_PASSWORD هنوز مقدار نمونه‌ی ChangeMe است.');
+  }
+
+  if (errors.length) {
+    throw new Error(
+      '\n🔒 راه‌اندازی متوقف شد — تنظیمات ناامن در production:\n' +
+        errors.map((e) => '  ✗ ' + e).join('\n') +
+        '\n\nاین مقادیر را در server/.env درست کن و دوباره اجرا کن.\n' +
+        'برای ساخت secret:  node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"\n'
+    );
+  }
+}
+
+assertProductionSafety(config);
 
 module.exports = config;

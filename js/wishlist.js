@@ -37,7 +37,7 @@
       card.addEventListener("click", function (e) {
         if (e.target.closest(".remove-wish") || e.target.closest(".add-btn")) return;
         localStorage.setItem("or_last_product", p.slug);
-        window.location.href = "product.html?slug=" + p.slug;
+        window.location.href = window.API.withSession("product.html?slug=" + p.slug);
       });
 
       function doRemove() {
@@ -99,7 +99,7 @@
         });
         chain.then(function () {
           window.showToast && window.showToast(fmt(items.length) + " محصول به سبد اضافه شد 🛒 — میری سبد");
-          setTimeout(function () { window.location.href = "cart.html"; }, 1000);
+          setTimeout(function () { window.location.href = window.API.withSession("cart.html"); }, 1000);
         });
       });
     });

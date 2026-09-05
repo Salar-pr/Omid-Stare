@@ -240,3 +240,184 @@
 @keyframes door-open-right { to { transform: translateX(103%); } }
 @keyframes promoIn { to { opacity:1; transform: translateX(-50%) translateY(0); } }
 
+
+/* ===== نوار خرید افقی زیر کارت آلبوم ===== */
+.album-card { display: flex; flex-direction: column; }
+.album-card .album-info { flex: 1; }
+.album-card .cover { display: flex; }
+.album-title-link { color: inherit; text-decoration: none; }
+.album-title-link:hover { color: var(--cyan, #00ffd1); }
+
+.track-more {
+  display: block; margin-top: 6px; padding: 8px 10px;
+  font-size: 0.76rem; color: var(--cyan, #00ffd1); text-decoration: none;
+  border: 1px dashed rgba(0,255,209,0.22); border-radius: 10px; text-align: center;
+  transition: background 0.2s ease;
+}
+.track-more:hover { background: rgba(0,255,209,0.07); }
+
+.album-detail-btn {
+  display: block; margin-top: 12px; text-align: center;
+  font-size: 0.78rem; padding: 9px 14px; text-decoration: none;
+}
+
+.album-buybar {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  padding: 14px 16px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  background:
+    linear-gradient(100deg, rgba(255,45,149,0.07), rgba(122,44,255,0.07)),
+    rgba(10,8,18,0.72);
+  position: relative; z-index: 5;
+}
+.album-buybar .bb-left { display: flex; align-items: center; gap: 9px; min-width: 0; flex: 1 1 160px; }
+.album-buybar .bb-thumb {
+  width: 40px; height: 40px; border-radius: 10px; object-fit: cover; flex: none;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+.album-buybar .bb-txt { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.album-buybar .bb-name {
+  font-size: 0.75rem; font-weight: 700; color: #e6dfd2;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.album-buybar .bb-label { font-size: 0.7rem; color: #a9a39a; }
+.album-buybar .bb-stock { font-size: 0.64rem; color: #9ad7a0; letter-spacing: 0.5px; }
+.album-buybar .bb-stock.low { color: #ffc46b; }
+.album-buybar .bb-stock.out { color: #ff2d95; }
+.album-buybar .bb-soon { font-size: 0.78rem; color: #cdc6ba; }
+
+/* ستون عمودی: قیمت قدیم بالا، قیمت جدید پایین — روی هم نمی‌افتند */
+.album-buybar .bb-price {
+  display: flex; flex-direction: column; align-items: flex-start;
+  justify-content: center; line-height: 1.35;
+  font-size: 1rem; font-weight: 900; white-space: nowrap; flex: none;
+  background: linear-gradient(90deg, var(--lime, #d9ff00), var(--cyan, #00ffd1));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.album-buybar .bb-price small { font-size: 0.62rem; }
+.album-buybar .bb-old {
+  font-size: 0.64rem; color: #7a7570; line-height: 1.2;
+  text-decoration: line-through; -webkit-text-fill-color: #7a7570;
+}
+
+.album-buybar .bb-qty {
+  display: flex; align-items: center; gap: 4px; flex: none;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 999px; padding: 3px;
+}
+.album-buybar .bb-qty button {
+  width: 26px; height: 26px; border-radius: 50%; border: none; cursor: pointer;
+  font-weight: 900; background: rgba(255,255,255,0.07); color: #f7f2e8;
+  transition: background 0.2s ease;
+}
+.album-buybar .bb-qty button:hover { background: rgba(255,45,149,0.35); }
+.album-buybar .bb-q { min-width: 22px; text-align: center; font-weight: 900; font-size: 0.82rem; }
+
+.album-buybar .bb-add {
+  padding: 9px 16px; font-size: 0.75rem; font-weight: 900; cursor: pointer; flex: none;
+}
+.album-buybar .bb-add:disabled { opacity: 0.5; cursor: not-allowed; }
+.album-buybar .bb-add.added {
+  background: linear-gradient(100deg, var(--lime, #d9ff00), var(--cyan, #00ffd1)) !important;
+  color: #08070f !important;
+}
+.album-buybar .bb-link { font-size: 0.68rem; color: #a9a39a; text-decoration: none; white-space: nowrap; }
+.album-buybar .bb-link:hover { color: var(--cyan, #00ffd1); }
+.album-buybar .bb-shop { padding: 8px 14px; font-size: 0.72rem; text-decoration: none; }
+
+@media (max-width: 520px) {
+  .album-buybar { gap: 8px; }
+  .album-buybar .bb-left { flex: 1 1 100%; }
+  .album-buybar .bb-add { flex: 1 1 100%; }
+}
+
+/* ===== صفحه‌ی جزئیات آلبوم (album.html) ===== */
+.album-detail-wrap { padding: 0 4vw 70px; max-width: 1100px; margin: 0 auto; }
+
+.ad-head {
+  display: grid; grid-template-columns: 300px 1fr; gap: 26px; align-items: center;
+  background: linear-gradient(180deg, rgba(22,16,40,0.82), rgba(10,8,18,0.9));
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px 20px 0 0; padding: 24px;
+}
+.ad-cover {
+  width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+  background:
+    radial-gradient(90% 70% at 20% 20%, rgba(255,45,149,0.08), transparent 60%),
+    radial-gradient(80% 60% at 80% 75%, rgba(122,44,255,0.10), transparent 62%),
+    #0a0a0f;
+  border-radius: 16px; overflow: hidden; padding: 16px;
+}
+/* min-width:0 لازم است وگرنه آیتم فلکس با aspect-ratio از قاب بیرون می‌زند */
+.ad-cover .vinyl {
+  width: 88%; max-width: 88%; height: auto; min-width: 0; flex: 0 0 auto;
+  animation: vinylSpin 16s linear infinite;
+}
+.ad-meta h1 { font-size: 2rem; font-weight: 900; line-height: 1.3; }
+.ad-meta .ad-fa { color: #a9a39a; margin: 4px 0 12px; font-size: 0.95rem; }
+.ad-meta .album-meta { margin-bottom: 12px; }
+.ad-desc { color: #c9c2b5; font-size: 0.9rem; line-height: 2; }
+
+.album-detail-wrap .album-buybar { border-radius: 0 0 20px 20px; border: 1px solid rgba(255,255,255,0.08); border-top: none; }
+
+.ad-block { margin-top: 28px; }
+.ad-block h2 {
+  font-size: 1.15rem; font-weight: 900; margin-bottom: 12px;
+  padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.ad-tracks { display: flex; flex-direction: column; gap: 8px; }
+.ad-track {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border-radius: 14px;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.ad-track:hover { border-color: rgba(255,45,149,0.24); transform: translateX(-3px); }
+.ad-track .num {
+  width: 30px; height: 30px; border-radius: 50%; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  background: #1e1e26; border: 1px solid rgba(255,255,255,0.10);
+  font-size: 0.78rem; font-weight: 900;
+}
+.ad-track-txt { flex: 1; min-width: 0; }
+.ad-track-txt b { font-size: 0.9rem; }
+.ad-track audio { height: 32px; max-width: 220px; }
+.ad-track small { color: #a9a39a; font-size: 0.76rem; flex: none; }
+
+/* flex به‌جای auto-fit: با یک آیتم، کارت کشیده و غول‌پیکر نمی‌شود */
+.ad-others { display: flex; flex-wrap: wrap; gap: 12px; }
+.ad-other {
+  flex: 0 1 180px; max-width: 220px;
+  display: block; text-decoration: none; color: inherit; padding: 10px;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px; transition: transform 0.25s ease, border-color 0.25s ease;
+}
+.ad-other:hover { transform: translateY(-4px); border-color: rgba(255,45,149,0.22); }
+.ad-other img {
+  width: 100%; height: auto; aspect-ratio: 1; object-fit: cover;
+  border-radius: 10px; margin-bottom: 8px;
+}
+.ad-other b {
+  display: block; font-size: 0.85rem; line-height: 1.5;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.ad-other small { color: #a9a39a; font-size: 0.7rem; }
+
+@media (max-width: 420px) {
+  .ad-other { flex: 1 1 100%; max-width: none; }
+}
+
+.ad-back { margin-top: 26px; text-align: center; }
+.ad-back .btn { text-decoration: none; }
+
+@media (max-width: 800px) {
+  .ad-head { grid-template-columns: 1fr; text-align: center; }
+  .ad-cover { width: min(280px, 72vw); max-width: none; margin: 0 auto; }
+  .ad-meta .album-meta { justify-content: center; }
+  .ad-track audio { display: none; }
+}
+
+/* تصاویر داخل صفحه‌ی جزئیات هیچ‌وقت از قاب خودشان بزرگ‌تر نشوند */
+.album-detail-wrap img { max-width: 100%; height: auto; }
+.album-detail-wrap { overflow-x: hidden; }

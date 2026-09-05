@@ -118,6 +118,11 @@ function runNodeScript(scriptRel, args = []) {
     password: PASSWORD,
     authMethod: 'password',
     persistent: true,
+    // مهم برای ویندوز: بدون این، initdb از encoding سیستمی استفاده می‌کند
+    // (روی ویندوزِ فارسی/انگلیسی معمولاً WIN1252) و template0/template1 هم
+    // همان می‌شوند. نتیجه: هر متن فارسی موقع migration با خطای
+    // «has no equivalent in encoding WIN1252» رد می‌شود.
+    initdbFlags: ['--encoding=UTF8', '--locale=C'],
     onLog: (msg) => { if (VERBOSE) console.log('  [pg]', msg); },
     onError: (e) => { if (VERBOSE) console.error('  [pg]', e); },
   });
@@ -153,10 +158,35 @@ function runNodeScript(scriptRel, args = []) {
     };
     for (const dbName of [DB_APP, DB_TEST]) {
       if (await exists(dbName)) {
+        // اگر دیتابیس قبلاً با encoding اشتباه ساخته شده باشد (روی ویندوز
+        // معمولاً WIN1252)، متن فارسی داخلش جا نمی‌شود و migration با خطای
+        // «has no equivalent in encoding WIN1252» شکست می‌خورد. پس چک می‌کنیم.
+        const enc = await client.query(
+          'SELECT pg_encoding_to_char(encoding) AS e FROM pg_database WHERE datname = $1',
+          [dbName]
+        );
+        const current = enc.rows[0] && enc.rows[0].e;
+        if (current !== 'UTF8') {
+          console.error(
+            `\x1b[31m[db]\x1b[0m دیتابیس «${dbName}» با encoding نامناسب «${current}» ساخته شده.` +
+              `\n  متن فارسی در آن ذخیره نمی‌شود. پوشه‌ی داده را پاک کنید تا از نو ساخته شود:\n` +
+              `\n      ویندوز:      rmdir /s /q .pgdata` +
+              `\n      مک/لینوکس:   rm -rf .pgdata\n` +
+              `\n  بعد دوباره «npm run db:embedded» را بزنید.`
+          );
+          await client.end();
+          await pg.stop();
+          process.exit(1);
+        }
         log(`دیتابیس «${dbName}» از قبل هست ✅`);
       } else {
-        await pg.createDatabase(dbName);
-        log(`دیتابیس «${dbName}» ساخته شد ✅`);
+        // صریحاً UTF8 می‌سازیم. TEMPLATE template0 لازم است چون template1
+        // ممکن است خودش encoding سیستمی (مثلاً WIN1252) داشته باشد و
+        // آن را به دیتابیس جدید تحمیل کند.
+        await client.query(
+          `CREATE DATABASE "${dbName}" WITH ENCODING 'UTF8' TEMPLATE template0`
+        );
+        log(`دیتابیس «${dbName}» ساخته شد (UTF8) ✅`);
       }
     }
     await client.end();

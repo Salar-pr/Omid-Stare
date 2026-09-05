@@ -3,10 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/png" href="images/logo.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Vazirmatn:wght@400;500;700;900&display=swap" />
+    <link rel="icon" type="image/png" href="images/logo.png" />    <link rel="stylesheet" href="/fonts/local.css" />
     <link rel="stylesheet" href="css/main.css" />
     <title>آلبوم‌ها — OMID RASTAR PSYCH VINYL</title>
   </head>
@@ -48,6 +45,13 @@
       <div class="page-hero rv">
         <h1>وینیلایِ <span>پرتالی</span></h1>
         <p>کاور آلبوم رفته وسط دیسک — مثل وینیل واقعی. بذار بچرخه 👁️</p>
+        <div style="margin-top:14px;">
+          <a class="cart-btn" href="cart.html" style="text-decoration:none;">
+            <span class="cart-icon">🛒</span>
+            <span>سبد خرید</span>
+            <span class="cart-count" id="albumsCartCount">0</span>
+          </a>
+        </div>
       </div>
 
       <div class="albums-grid" id="albums">
@@ -174,6 +178,7 @@
     <script src="js/toast.js"></script>
     <script src="js/nav.js"></script>
     <script src="js/fx.js"></script>
+    <script src="js/album-shared.js"></script>
     <script src="js/albums.js"></script>
   </body>
 </html>

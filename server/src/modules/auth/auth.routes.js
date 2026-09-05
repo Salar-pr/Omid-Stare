@@ -10,6 +10,18 @@ const { ok, created, fail } = require('../../utils/respond');
 const { AuthError } = require('../../utils/errors');
 const { authenticate } = require('../../middlewares/auth');
 
+/**
+ * وقتی جاسازی در iframe مجاز است، توکن سشن را کنار اطلاعات کاربر برمی‌گردانیم.
+ * دلیل: در iframe بین‌دامنه‌ای مرورگر ممکن است کوکی را ذخیره نکند؛ آن‌وقت فرانت
+ * توکن را نگه می‌دارد و به‌صورت Authorization: Bearer می‌فرستد.
+ * در production (allowEmbedding=false) هیچ توکنی در بدنه برنمی‌گردد و فقط
+ * کوکی HttpOnly معتبر است — یعنی سطح حمله‌ی XSS بیشتر نمی‌شود.
+ */
+function withToken(user, session) {
+  if (!config.allowEmbedding) return user;
+  return { ...user, sessionToken: session.token };
+}
+
 async function authRoutes(app) {
   const rlAuth = {
     config: { rateLimit: { max: config.rateLimit.auth, timeWindow: '15 minutes' } },
@@ -18,8 +30,10 @@ async function authRoutes(app) {
   app.post('/auth/register', rlAuth, async (req, reply) => {
     try {
       const { user, session } = await authService.register(req.body || {}, req);
-      reply.cookie(config.cookieName, session.token, sessionService.cookieOptions(session.expiresAt));
-      return created(reply, user, `به ووید خوش اومدی، ${user.name}! 🌀`);
+      reply.cookie(config.cookieName, session.token, sessionService.cookieOptions(session.expiresAt, req));
+      // sessionToken فقط وقتی برگردانده می‌شود که جاسازی در iframe مجاز است
+      // (محیط پیش‌نمایش) — فرانت اگر کوکی کار نکرد از آن به‌عنوان Bearer استفاده می‌کند.
+      return created(reply, withToken(user, session), `به ووید خوش اومدی، ${user.name}! 🌀`);
     } catch (err) {
       return fail(reply, err, req.log);
     }
@@ -28,8 +42,8 @@ async function authRoutes(app) {
   app.post('/auth/login', rlAuth, async (req, reply) => {
     try {
       const { user, session } = await authService.login(req.body || {}, req, req.log);
-      reply.cookie(config.cookieName, session.token, sessionService.cookieOptions(session.expiresAt));
-      return ok(reply, user, `خوش برگشتی، ${user.name}! 👁️`);
+      reply.cookie(config.cookieName, session.token, sessionService.cookieOptions(session.expiresAt, req));
+      return ok(reply, withToken(user, session), `خوش برگشتی، ${user.name}! 👁️`);
     } catch (err) {
       return fail(reply, err, req.log);
     }

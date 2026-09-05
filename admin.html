@@ -3,10 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/png" href="images/logo.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Vazirmatn:wght@400;500;700;900&display=swap" />
+    <link rel="icon" type="image/png" href="images/logo.png" />    <link rel="stylesheet" href="/fonts/local.css" />
     <link rel="stylesheet" href="css/admin.css" />
     <title>پنل ادمین | OMID RASTAR</title>
   </head>
@@ -54,6 +51,7 @@
         <aside class="side" id="side">
           <button type="button" data-sec="dash" class="on"><span class="ic">📊</span>داشبورد</button>
           <button type="button" data-sec="orders"><span class="ic">🧾</span>سفارش‌ها</button>
+          <button type="button" data-sec="fulfill"><span class="ic">🚚</span>وضعیت ارسال</button>
           <button type="button" data-sec="products"><span class="ic">👕</span>محصولات</button>
           <button type="button" data-sec="albums"><span class="ic">💿</span>آلبوم‌ها</button>
           <button type="button" data-sec="coupons"><span class="ic">🎟️</span>کد تخفیف</button>
@@ -86,6 +84,39 @@
             </div>
             <div class="tbl-wrap"><table class="tbl" id="orders-tbl"></table></div>
             <p class="desc" style="margin-top:10px">تغییر وضعیت فقط در مسیرهای منطقی ممکن است (مثلاً ارسال‌شده → تحویل‌شده)؛ بقیه را سرور رد می‌کند.</p>
+          </section>
+
+          <!-- وضعیت ارسال -->
+          <section id="sec-fulfill" class="box hidden">
+            <div class="box-head">
+              <h2>وضعیت ارسال <span>🚚</span></h2>
+              <div class="spacer"></div>
+              <button class="small" type="button" data-reload="fulfill">بازخوانی</button>
+            </div>
+
+            <!-- کارت‌های خلاصه -->
+            <div id="ff-cards" class="ff-cards"><div class="empty">در حال بارگذاری…</div></div>
+
+            <!-- نوار پیشرفت انجام سفارش -->
+            <div id="ff-progress" class="ff-progress hidden">
+              <div class="ff-bar"><span id="ff-bar-fill"></span></div>
+              <div class="ff-bar-legend">
+                <span><i class="dot done"></i> ارسال‌شده: <b id="ff-lg-shipped">۰</b></span>
+                <span><i class="dot wait"></i> در انتظار: <b id="ff-lg-pending">۰</b></span>
+                <span class="mut" id="ff-lg-rate"></span>
+              </div>
+            </div>
+
+            <!-- فیلتر گروه -->
+            <div class="ff-tabs" id="ff-tabs">
+              <button type="button" class="on" data-group="pending">در انتظار ارسال</button>
+              <button type="button" data-group="stale">معطل‌مانده ⚠️</button>
+              <button type="button" data-group="shipped">ارسال‌شده</button>
+              <button type="button" data-group="all">همه</button>
+            </div>
+
+            <div class="tbl-wrap"><table class="tbl" id="ff-tbl"></table></div>
+            <p class="desc" id="ff-hint" style="margin-top:10px"></p>
           </section>
 
           <!-- محصولات -->

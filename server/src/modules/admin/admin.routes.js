@@ -9,6 +9,7 @@ const config = require('../../config');
 const dashboard = require('./dashboard.service');
 const products = require('./products.service');
 const orders = require('./orders.service');
+const fulfillment = require('./fulfillment.service');
 const users = require('./users.service');
 const albums = require('./albums.service');
 const media = require('./media.service');
@@ -26,6 +27,25 @@ async function adminRoutes(app) {
   app.get('/dashboard', async (req, reply) => {
     try {
       return ok(reply, await dashboard.stats());
+    } catch (err) {
+      return fail(reply, err, req.log);
+    }
+  });
+
+  // ---------- fulfillment (وضعیت ارسال) ----------
+  // خلاصه: چند تا فرستاده شده، چند تا مانده، چند تا معطل
+  app.get('/fulfillment/summary', async (req, reply) => {
+    try {
+      return ok(reply, await fulfillment.summary());
+    } catch (err) {
+      return fail(reply, err, req.log);
+    }
+  });
+
+  // لیست گروه‌بندی‌شده: ?group=pending|shipped|stale|all
+  app.get('/fulfillment/orders', async (req, reply) => {
+    try {
+      return ok(reply, await fulfillment.list(req.query || {}));
     } catch (err) {
       return fail(reply, err, req.log);
     }

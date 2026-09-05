@@ -34,8 +34,138 @@
   function chipInfo(v) { return '<span class="chip info">' + v + '</span>'; }
   function money(n) { return fmtNum(n) + ' تومان'; }
 
+  // ============================================
+  // وضعیت ارسال — چه سفارش‌هایی رفته، چه‌هایی مانده
+  // ============================================
+  var ffGroup = 'pending';
+
+  function ffCard(cls, icon, label, value, sub) {
+    return (
+      '<div class="ff-card ' + cls + '">' +
+        '<div class="ff-ic">' + icon + '</div>' +
+        '<div class="ff-body">' +
+          '<div class="ff-num">' + fmtNum(value) + '</div>' +
+          '<div class="ff-lbl">' + label + '</div>' +
+          (sub ? '<div class="ff-sub">' + sub + '</div>' : '') +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function renderFulfillCards() {
+    var box = document.getElementById('ff-cards');
+    if (!box) return;
+    box.innerHTML = '<div class="empty">در حال بارگذاری…</div>';
+
+    api('get', '/admin/fulfillment/summary').then(function (d) {
+      var sh = d.shipped, pn = d.pending;
+
+      box.innerHTML =
+        ffCard('ok', '✅', 'ارسال‌شده', sh.total,
+          'در راه: ' + fmtNum(sh.inTransit) + ' · تحویل‌شده: ' + fmtNum(sh.delivered)) +
+        ffCard('warn', '📦', 'در انتظار ارسال', pn.total,
+          'جدید: ' + fmtNum(pn.newOrders) + ' · تایید: ' + fmtNum(pn.confirmed) + ' · پردازش: ' + fmtNum(pn.processing)) +
+        ffCard(pn.stale ? 'bad' : 'mut', '⚠️', 'معطل‌مانده', pn.stale,
+          'بیش از ' + fmtNum(d.staleDays) + ' روز بدون ارسال') +
+        ffCard(pn.paidAwaiting ? 'bad' : 'mut', '💰', 'پرداخت‌شده ولی نرفته', pn.paidAwaiting,
+          'پول گرفته شده، ارسال نشده') +
+        ffCard('info', '🧾', 'ارزش سفارش‌های مانده', pn.value, 'تومان') +
+        ffCard('mut', '✖️', 'لغوشده', d.cancelled, 'خارج از آمار عملیاتی');
+
+      // نوار پیشرفت
+      var prog = document.getElementById('ff-progress');
+      if (prog) {
+        prog.classList.remove('hidden');
+        var fill = document.getElementById('ff-bar-fill');
+        if (fill) fill.style.width = d.fulfillmentRate + '%';
+        document.getElementById('ff-lg-shipped').textContent = fmtNum(sh.total);
+        document.getElementById('ff-lg-pending').textContent = fmtNum(pn.total);
+        document.getElementById('ff-lg-rate').textContent =
+          d.fulfillmentRate + '٪ از سفارش‌های عملیاتی انجام شده';
+      }
+    }).catch(function (e) {
+      box.innerHTML = '<div class="empty">' + esc(errMsg(e, 'خطا در دریافت آمار ارسال')) + '</div>';
+    });
+  }
+
+  var FF_HINTS = {
+    pending: 'این سفارش‌ها هنوز ارسال نشده‌اند. قدیمی‌ترین‌ها بالا هستند تا اول به آن‌ها برسی.',
+    stale: 'این‌ها بیش از حد معطل مانده‌اند — مشتری منتظر است. اولویت اول.',
+    shipped: 'این سفارش‌ها از انبار خارج شده‌اند (ارسال‌شده یا تحویل‌شده). تازه‌ترین‌ها بالا.',
+    all: 'همه‌ی سفارش‌ها بدون فیلتر، از قدیمی به جدید.',
+  };
+
+  function renderFulfillList(group) {
+    ffGroup = group;
+    var box = document.getElementById('ff-tbl');
+    if (!box) return;
+    box.innerHTML = '<tr><td class="empty" colspan="8">در حال بارگذاری…</td></tr>';
+
+    var hint = document.getElementById('ff-hint');
+    if (hint) hint.textContent = FF_HINTS[group] || '';
+
+    // دکمه‌ی فعال
+    var tabs = document.querySelectorAll('#ff-tabs button');
+    for (var i = 0; i < tabs.length; i++) {
+      tabs[i].classList.toggle('on', tabs[i].getAttribute('data-group') === group);
+    }
+
+    api('get', '/admin/fulfillment/orders?group=' + group + '&limit=50').then(function (d) {
+      var items = d.items || [];
+      if (!items.length) {
+        var msg = group === 'stale'
+          ? 'هیچ سفارش معطلی نیست 🎉 همه به‌موقع رسیدگی شده‌اند.'
+          : group === 'pending'
+            ? 'هیچ سفارشی در انتظار ارسال نیست 🎉'
+            : 'موردی پیدا نشد.';
+        box.innerHTML = '<tr><td class="empty" colspan="8">' + msg + '</td></tr>';
+        return;
+      }
+
+      box.innerHTML =
+        '<tr><th>شماره</th><th>مشتری</th><th>اقلام</th><th>مبلغ</th>' +
+        '<th>وضعیت</th><th>پرداخت</th><th>سن سفارش</th><th>اقدام</th></tr>' +
+        items.map(function (o) {
+          var isShipped = o.status === 'shipped' || o.status === 'delivered';
+
+          // سن سفارش: برای معطل‌ها قرمز
+          var age = o.isStale
+            ? chipNo(fmtNum(o.ageDays) + ' روز ⚠️')
+            : isShipped
+              ? '<span class="mut">' + fmtNum(o.ageDays) + ' روز</span>'
+              : chipWarn(fmtNum(o.ageDays) + ' روز');
+
+          var st = isShipped ? chipOk(STATUS_L[o.status]) : chipWarn(STATUS_L[o.status] || o.status);
+          var pay = o.paymentStatus === 'paid' ? chipOk(PAY_L.paid) : chipInfo(PAY_L[o.paymentStatus] || o.paymentStatus);
+
+          // اقدام سریع: گذار بعدی منطقی
+          var next = (TRANSITIONS[o.status] || []).filter(function (s) { return s !== 'cancelled'; })[0];
+          var act = next
+            ? '<button class="small" type="button" data-act="ff-advance" data-id="' + o.id +
+              '" data-next="' + next + '">→ ' + esc(STATUS_L[next] || next) + '</button>'
+            : '<span class="mut">—</span>';
+
+          return '<tr' + (o.isStale ? ' class="row-stale"' : '') + '>' +
+            '<td class="mono">' + esc(o.orderNumber) + '</td>' +
+            '<td>' + esc(o.customerName) +
+              '<div class="mut mono" dir="ltr" style="text-align:right">' + esc(o.customerPhone || '') + '</div>' +
+              (o.city ? '<div class="mut">' + esc(o.city) + '</div>' : '') +
+            '</td>' +
+            '<td>' + fmtNum(o.units) + ' عدد<div class="mut">' + fmtNum(o.itemsCount) + ' قلم</div></td>' +
+            '<td>' + money(o.totalAmount) + '</td>' +
+            '<td>' + st + '</td>' +
+            '<td>' + pay + '</td>' +
+            '<td>' + age + '</td>' +
+            '<td><div class="actions">' + act + '</div></td>' +
+            '</tr>';
+        }).join('');
+    }).catch(function (e) {
+      box.innerHTML = '<tr><td class="empty" colspan="8">' + esc(errMsg(e, 'خطا در دریافت لیست')) + '</td></tr>';
+    });
+  }
+
   // ---------- navigation ----------
-  var SECTIONS = ['dash', 'orders', 'products', 'albums', 'coupons', 'messages', 'reviews', 'users', 'media', 'notifs'];
+  var SECTIONS = ['dash', 'orders', 'fulfill', 'products', 'albums', 'coupons', 'messages', 'reviews', 'users', 'media', 'notifs'];
   var loaded = {};
 
   function showSection(name) {
@@ -83,7 +213,7 @@
     window.API.post('/auth/logout')
       .catch(function () {})
       .finally(function () {
-        window.location.href = 'account.html';
+        window.location.href = window.API.withSession('account.html');
       });
   }
 
@@ -160,6 +290,12 @@
       });
     },
 
+    // ---------- fulfillment (وضعیت ارسال) ----------
+    fulfill: function () {
+      renderFulfillCards();
+      renderFulfillList(ffGroup);
+    },
+
     // ---------- products ----------
     products: function () {
       var box = document.getElementById('products-tbl');
@@ -217,7 +353,7 @@
               '<button class="small" type="button" data-act="album-up" data-id="' + a.id + '" title="بالا">↑</button>' +
               '<button class="small" type="button" data-act="album-down" data-id="' + a.id + '" title="پایین">↓</button>' +
               '<button class="small" type="button" data-act="album-pub" data-id="' + a.id + '" data-pub="' + a.isPublished + '">' + (a.isPublished ? 'پیش‌نویس کن' : 'منتشر کن') + '</button>' +
-              '<button class="small danger" type="button" data-act="album-del" data-id="' + a.id + '">حذف</button>' +
+              '<button class="small danger" type="button" data-act="album-del" data-id="' + a.id + '" data-title="' + esc(a.title) + '">حذف کامل</button>' +
               '</div></td></tr>';
           }).join('');
       }).catch(function (e) {
@@ -404,6 +540,28 @@
     if (btn.hasAttribute('data-sec')) { showSection(btn.getAttribute('data-sec')); return; }
     if (btn.hasAttribute('data-reload')) { LOADERS[btn.getAttribute('data-reload')](); return; }
 
+    // ---------- وضعیت ارسال ----------
+    if (btn.hasAttribute('data-group')) {
+      renderFulfillList(btn.getAttribute('data-group'));
+      return;
+    }
+
+    // اقدام سریع: بردن سفارش به مرحله‌ی بعد بدون رفتن به تب سفارش‌ها
+    if (act === 'ff-advance') {
+      var nextSt = btn.getAttribute('data-next');
+      btn.disabled = true;
+      api('patch', '/admin/orders/' + id + '/status', { status: nextSt })
+        .then(function () {
+          toast('سفارش به «' + (STATUS_L[nextSt] || nextSt) + '» رفت ✅');
+          renderFulfillCards();
+          renderFulfillList(ffGroup);
+          loaded.orders = false; // تب سفارش‌ها دفعه‌ی بعد تازه شود
+          loaded.dash = false;
+        })
+        .catch(function (er) { btn.disabled = false; failToast(er, 'خطا در تغییر وضعیت'); });
+      return;
+    }
+
     // ---------- سفارش ----------
     if (act === 'order-save') {
       var sel = document.querySelector('.sel-status[data-id="' + id + '"]');
@@ -480,8 +638,12 @@
       return;
     }
     if (act === 'album-del') {
-      if (!confirm('آلبوم حذف شود؟')) return;
-      api('del', '/admin/albums/' + id)
+      // hard=1 یعنی حذف واقعی از دیتابیس (ترک‌ها هم با CASCADE پاک می‌شوند).
+      // بدون آن، سرور فقط is_published را false می‌کند و آلبوم در لیست می‌ماند —
+      // که باعث می‌شد به نظر برسد دکمه‌ی حذف کار نمی‌کند.
+      var t = btn.getAttribute('data-title') || 'این آلبوم';
+      if (!confirm('«' + t + '» برای همیشه حذف شود؟\n\nترک‌های آن هم پاک می‌شوند و برگشت‌پذیر نیست.\n\nاگر فقط می‌خواهید از سایت پنهان شود، به‌جای این از دکمه‌ی «پیش‌نویس کن» استفاده کنید.')) return;
+      api('del', '/admin/albums/' + id + '?hard=1')
         .then(function () { toast('آلبوم حذف شد'); LOADERS.albums(); })
         .catch(function (er) { failToast(er, 'خطا'); });
       return;

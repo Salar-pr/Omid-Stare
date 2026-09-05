@@ -61,8 +61,23 @@ async function registerStatic(app) {
       wildcard: true,
       cacheControl: false, // خودمان per-type ست می‌کنیم
       setHeaders: (raw, filePath) => {
-        const rel = filePath.slice(config.frontendDir.length).replace(/\\/g, '/');
-        raw.setHeader('Cache-Control', cacheHeaderFor(rel));
+        // نسخه‌های مختلف @fastify/static شیء متفاوتی می‌دهند: گاهی res خام
+        // (دارای setHeader) و گاهی reply فستیفای (دارای header). اگر هیچ‌کدام
+        // نبود بی‌سروصدا رد می‌شویم — کش هدر یک بهینه‌سازی است، نه چیز حیاتی،
+        // و نباید کل سرو فایل استاتیک را بشکند.
+        try {
+          const rel = String(filePath || '')
+            .slice(config.frontendDir.length)
+            .replace(/\\/g, '/');
+          const value = cacheHeaderFor(rel);
+          if (raw && typeof raw.setHeader === 'function') {
+            raw.setHeader('Cache-Control', value);
+          } else if (raw && typeof raw.header === 'function') {
+            raw.header('Cache-Control', value);
+          }
+        } catch (e) {
+          /* بی‌خیال — فایل باید سرو شود حتی اگر هدر کش ست نشد */
+        }
       },
     });
   });
@@ -88,7 +103,19 @@ async function buildApp({ logger = true } = {}) {
         censor: '[REDACTED]',
       },
     },
-    trustProxy: true,
+    // trustProxy را کورکورانه true نکن: با true هر کلاینتی می‌تواند X-Forwarded-For
+    // جعل کند و rate limit مبتنی بر IP و IP ثبت‌شده‌ی سشن را بی‌اثر/آلوده کند.
+    // TRUST_PROXY را فقط وقتی ست کن که واقعاً پشت پراکسی هستی:
+    //   TRUST_PROXY=1            → یک هاپ پراکسی (رایج: nginx/Caddy جلوی اپ)
+    //   TRUST_PROXY=10.0.0.0/8   → فقط این رنج قابل اعتماد است
+    //   TRUST_PROXY=false/خالی   → به هیچ هدر پراکسی اعتماد نکن (پیش‌فرض امن)
+    trustProxy: (() => {
+      const v = (process.env.TRUST_PROXY || '').trim();
+      if (!v || v === 'false' || v === '0') return false;
+      if (v === 'true') return true;
+      if (/^\d+$/.test(v)) return Number(v); // تعداد هاپ‌های قابل اعتماد
+      return v; // لیست IP/CIDR جداشده با کاما
+    })(),
     bodyLimit: 1024 * 1024, // 1MB JSON
   });
 
@@ -105,17 +132,42 @@ async function buildApp({ logger = true } = {}) {
     // CSP خاموش: frontend فعلی inline script/style زیاد دارد (هویت بصری حفظ می‌شود).
     // بقیه هدرهای امنیتی فعالند.
     contentSecurityPolicy: false,
-    crossOriginResourcePolicy: { policy: 'same-site' },
+    // Cross-Origin-Resource-Policy: same-site باعث می‌شود مرورگر در iframe
+    // بین‌دامنه‌ای همه‌ی CSS/JS را با ERR_BLOCKED_BY_RESPONSE.NotSameSite رد کند
+    // (صفحه بدون استایل و بدون جاوااسکریپت لود می‌شود و فرم‌ها کار نمی‌کنند).
+    // Cross-Origin-Opener-Policy هم context را ایزوله می‌کند.
+    crossOriginResourcePolicy: config.allowEmbedding ? { policy: 'cross-origin' } : { policy: 'same-site' },
+    crossOriginOpenerPolicy: config.allowEmbedding ? false : { policy: 'same-origin' },
+    // X-Frame-Options: SAMEORIGIN مانع نمایش سایت داخل iframe از دامنه‌ی دیگر می‌شود.
+    // در محیط پیش‌نمایش/توسعه این باعث می‌شود صفحه اصلاً لود نشود یا کوکی سشن
+    // ذخیره نشود (کاربر بعد از ورود دوباره به صفحه‌ی ورود پرت می‌شود).
+    // در production همچنان روشن می‌ماند (محافظت clickjacking).
+    frameguard: config.allowEmbedding ? false : { action: 'sameorigin' },
   });
+
+  // وقتی جاسازی در iframe مجاز است، کوکی سشن باید SameSite=None; Secure باشد
+  // وگرنه مرورگر آن را در context شخص‌ثالث نمی‌فرستد.
+  if (config.allowEmbedding) {
+    app.addHook('onSend', async (req, reply) => {
+      reply.removeHeader('x-frame-options');
+    });
+  }
 
   // rate limit جهانی + per-route (auth/coupon/contact/order در routeهایشان سخت‌ترند)
   await app.register(rateLimit, {
     global: true,
     max: config.rateLimit.global,
     timeWindow: '15 minutes',
-    errorResponseBuilder: () => ({
+    // statusCode لازم است وگرنه error handler آن را نمی‌شناسد و 500 برمی‌گرداند
+    errorResponseBuilder: (req, context) => ({
+      statusCode: 429,
+      code: 'FST_RATE_LIMIT',
       success: false,
-      error: { code: 'RATE_LIMITED', message: 'درخواستات خیلی شلوغه — چند دقیقه بعد امتحان کن.' },
+      error: {
+        code: 'RATE_LIMITED',
+        message: 'درخواستات خیلی شلوغه — چند دقیقه بعد امتحان کن.',
+        retryAfterSec: Math.ceil((context && context.ttl ? context.ttl : 0) / 1000) || undefined,
+      },
     }),
   });
 
